@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, Copy } from 'lucide-react';
+import { Download, Copy, Edit2 } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 
@@ -10,16 +10,18 @@ export const DocumentPreview = ({
   title = 'Document Preview',
   compact = false
 }) => {
+  const [isEditMode, setIsEditMode] = React.useState(false);
+
   const EditableField = ({ field, children, className = "" }) => {
     if (!onUpdateField) return <span className={className}>{children}</span>;
 
     return (
       <span
-        contentEditable
+        contentEditable={isEditMode}
         suppressContentEditableWarning
         onBlur={(e) => onUpdateField(field, e.currentTarget.textContent)}
-        className={`hover:bg-yellow-50 hover:cursor-text focus:bg-yellow-50 focus:outline-none rounded px-1 transition-colors border-b border-transparent hover:border-yellow-200 ${className}`}
-        title="Click to edit"
+        className={`${isEditMode ? 'hover:bg-yellow-50 hover:cursor-text focus:bg-yellow-50 focus:outline-none rounded px-1 transition-colors border-b border-indigo-200 ring-1 ring-transparent focus:ring-indigo-100' : ''} ${className}`}
+        title={isEditMode ? "Click to edit" : ""}
       >
         {children}
       </span>
@@ -31,11 +33,11 @@ export const DocumentPreview = ({
 
     return (
       <div
-        contentEditable
+        contentEditable={isEditMode}
         suppressContentEditableWarning
         onBlur={(e) => onUpdateField(field, e.currentTarget.textContent)}
-        className={`hover:bg-yellow-50 hover:cursor-text focus:bg-yellow-50 focus:outline-none rounded p-2 transition-colors border border-transparent hover:border-yellow-200 ${className}`}
-        title="Click to edit body"
+        className={`${isEditMode ? 'hover:bg-yellow-50 hover:cursor-text focus:bg-yellow-50 focus:outline-none rounded p-2 transition-colors border border-indigo-100 ring-1 ring-transparent focus:ring-indigo-50' : ''} ${className}`}
+        title={isEditMode ? "Click to edit body" : ""}
       >
         {children}
       </div>
@@ -50,9 +52,23 @@ export const DocumentPreview = ({
   }
 
   return (
-    <div className="h-full">
+    <div className="h-full relative">
+      {/* Edit Toggle Button - Top Right */}
+      <div className="absolute top-0 right-0 z-10 flex gap-2">
+        <button
+          onClick={() => setIsEditMode(!isEditMode)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-md ${isEditMode
+            ? 'bg-indigo-600 text-white ring-4 ring-indigo-100'
+            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+            }`}
+        >
+          <Edit2 size={14} />
+          {isEditMode ? 'Finish Editing' : 'Dynamic Edit Mode'}
+        </button>
+      </div>
+
       {/* Print-like preview */}
-      <div className="bg-white rounded-md p-12 shadow-2xl border border-gray-100 mb-8 mx-auto max-w-[850px] min-h-[1100px] transition-all">
+      <div className={`bg-white rounded-md p-12 shadow-2xl border mb-8 mx-auto max-w-[850px] min-h-[1100px] transition-all ${isEditMode ? 'border-indigo-300 ring-8 ring-indigo-50' : 'border-gray-100'}`}>
         {/* Only show header if NOT a proposal (user said no college header for proposal) */}
         {!content.proposal_date && (
           <div className="w-full mb-10 flex items-center justify-center">
