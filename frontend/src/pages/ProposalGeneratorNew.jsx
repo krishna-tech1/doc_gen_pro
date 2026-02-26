@@ -9,19 +9,19 @@ import { DocumentPreview } from '../components/Common/DocumentPreview';
 import { AlertCircle } from 'lucide-react';
 
 export default function ProposalGenerator() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [preview, setPreview] = useState({});
+  const navigate = useNavigate();
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
   const [downloadUrl, setDownloadUrl] = useState('');
   const [apiError, setApiError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const formData = watch();
 
   const onSubmit = async (data) => {
     setApiError('');
     setIsGenerating(true);
     try {
-      const payload = { ...data, budget: parseFloat(data.budget) };
-      const res = await generateProposal(payload);
-      setPreview(res.data.preview);
+      const res = await generateProposal(data);
       setDownloadUrl(res.data.download_url);
     } catch (err) {
       setApiError(err?.response?.data?.detail || 'Failed to generate proposal');
@@ -33,7 +33,7 @@ export default function ProposalGenerator() {
   return (
     <MainLayout
       title="Proposal Generator"
-      subtitle="Create structured event proposals with AI enhancement"
+      subtitle="Create formal institutional permission letters"
     >
       <div className="grid lg:grid-cols-12 gap-8 items-start">
         {/* Form Section */}
@@ -41,56 +41,60 @@ export default function ProposalGenerator() {
           <Card>
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Proposal Details</h3>
-              <p className="text-sm text-gray-500 mt-1">Describe your event proposal</p>
+              <p className="text-sm text-gray-500 mt-1">Fill in the institutional details</p>
             </CardHeader>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
-                <FormField
-                  label="Event Name"
-                  required
-                  error={errors.event_name?.message}
-                >
-                  <Input
-                    placeholder="e.g., National Science Symposium"
-                    {...register('event_name', { required: 'Event name is required' })}
-                  />
-                </FormField>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField label="Proposal Date" required error={errors.proposal_date?.message}>
+                    <Input type="date" {...register('proposal_date', { required: 'Required' })} />
+                  </FormField>
+                  <FormField label="Department" required error={errors.department?.message}>
+                    <Input placeholder="BCM / BCA / CS" {...register('department', { required: 'Required' })} />
+                  </FormField>
+                </div>
+
+                <div className="p-4 bg-slate-50 rounded-lg space-y-4 border border-slate-100">
+                  <h4 className="text-sm font-medium text-slate-900 border-b border-slate-200 pb-2 italic">From Information</h4>
+                  <FormField label="Name" required error={errors.from_name?.message}>
+                    <Input placeholder="Your Full Name" {...register('from_name', { required: 'Required' })} />
+                  </FormField>
+                  <FormField label="Designation" required error={errors.from_designation?.message}>
+                    <Input placeholder="Assistant Professor" {...register('from_designation', { required: 'Required' })} />
+                  </FormField>
+                </div>
+
+                <div className="p-4 bg-indigo-50/30 rounded-lg space-y-4 border border-indigo-100">
+                  <h4 className="text-sm font-medium text-indigo-900 border-b border-indigo-200 pb-2 italic">Event Highlights</h4>
+                  <FormField label="Event Name" required error={errors.event_name?.message}>
+                    <Input placeholder="Workshop / Symposium Name" {...register('event_name', { required: 'Required' })} />
+                  </FormField>
+                  <FormField label="Event Topic" required error={errors.event_topic?.message}>
+                    <Input placeholder="Machine Learning / UI Design" {...register('event_topic', { required: 'Required' })} />
+                  </FormField>
+                  <FormField label="Target Audience" required error={errors.target_audience?.message}>
+                    <Input placeholder="I & II Year Students" {...register('target_audience', { required: 'Required' })} />
+                  </FormField>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField label="Event Date" required error={errors.event_date?.message}>
+                      <Input type="date" {...register('event_date', { required: 'Required' })} />
+                    </FormField>
+                    <FormField label="Event Time" required error={errors.event_time?.message}>
+                      <Input type="time" {...register('event_time', { required: 'Required' })} />
+                    </FormField>
+                  </div>
+                </div>
 
                 <FormField
-                  label="Brief Objectives"
-                  required
-                  error={errors.objectives?.message}
+                  label="Short Description"
+                  subtitle="How will this benefit students?"
+                  error={errors.short_description?.message}
                 >
                   <Textarea
                     rows={4}
-                    placeholder="Describe the main objectives..."
-                    {...register('objectives', { required: 'Objectives are required' })}
-                  />
-                </FormField>
-
-                <FormField
-                  label="Target Audience"
-                  required
-                  error={errors.target_audience?.message}
-                >
-                  <Input
-                    placeholder="e.g., UG and PG students, Faculty"
-                    {...register('target_audience', { required: 'Target audience is required' })}
-                  />
-                </FormField>
-
-                <FormField
-                  label="Proposed Budget (₹)"
-                  required
-                  error={errors.budget?.message}
-                >
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="e.g., 50000"
-                    {...register('budget', { required: 'Budget is required', min: 0 })}
+                    placeholder="Focus area and learning outcomes..."
+                    {...register('short_description', { required: 'Required' })}
                   />
                 </FormField>
 
@@ -102,12 +106,13 @@ export default function ProposalGenerator() {
                 )}
               </CardContent>
 
-              <CardFooter>
-                <Button variant="secondary" size="md">Cancel</Button>
+              <CardFooter className="flex gap-4">
+                <Button variant="secondary" size="md" className="flex-1" onClick={() => navigate(-1)}>Cancel</Button>
                 <Button
                   type="submit"
                   loading={isGenerating}
                   size="md"
+                  className="flex-1"
                 >
                   Generate Proposal
                 </Button>
@@ -116,25 +121,22 @@ export default function ProposalGenerator() {
           </Card>
         </div>
 
-        {/* Preview Section */}
+        {/* Preview Section - Force Large View */}
         <div className="lg:col-span-7 sticky top-8">
-          <Card className="min-h-[calc(100vh-12rem)] flex flex-col">
-            <CardHeader>
-              <h3 className="font-semibold text-gray-900">Live Preview</h3>
-              <p className="text-sm text-gray-500 mt-1">See how your document will look</p>
+          <Card className="min-h-screen flex flex-col shadow-2xl border-indigo-50">
+            <CardHeader className="bg-slate-50/50 border-b">
+              <h3 className="font-semibold text-gray-900">Live Proposal Preview</h3>
+              <p className="text-sm text-gray-500 mt-1">Directly edit text in the preview box</p>
             </CardHeader>
 
-            <CardContent className="overflow-y-auto max-h-[calc(100vh-200px)]">
-              {preview && Object.keys(preview).length > 0 ? (
+            <CardContent className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-slate-50/50">
+              <div className="p-10">
                 <DocumentPreview
-                  content={preview}
-                  onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
+                  content={formData}
+                  onUpdateField={(field, value) => setValue(field, value)}
+                  onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-64 text-gray-500">
-                  <p>Fill out the form to see preview</p>
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>

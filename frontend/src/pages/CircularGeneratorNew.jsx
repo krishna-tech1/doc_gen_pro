@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { generateCircular, getDownloadUrl } from '../api';
 import { MainLayout } from '../components/Layout/MainLayout';
@@ -9,7 +10,8 @@ import { DocumentPreview } from '../components/Common/DocumentPreview';
 import { AlertCircle } from 'lucide-react';
 
 export default function CircularGenerator() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
   const [preview, setPreview] = useState({});
   const [downloadUrl, setDownloadUrl] = useState('');
   const [apiError, setApiError] = useState('');
@@ -58,28 +60,16 @@ export default function CircularGenerator() {
                   />
                 </FormField>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    label="Start Date"
-                    required
-                    error={errors.date?.message}
-                  >
-                    <Input
-                      type="date"
-                      {...register('date', { required: 'Start date is required' })}
-                    />
-                  </FormField>
-
-                  <FormField
-                    label="End Date (Optional)"
-                    error={errors.end_date?.message}
-                  >
-                    <Input
-                      type="date"
-                      {...register('end_date')}
-                    />
-                  </FormField>
-                </div>
+                <FormField
+                  label="Date"
+                  required
+                  error={errors.date?.message}
+                >
+                  <Input
+                    type="date"
+                    {...register('date', { required: 'Date is required' })}
+                  />
+                </FormField>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -166,6 +156,7 @@ export default function CircularGenerator() {
               <div className="p-10">
                 <DocumentPreview
                   content={formData}
+                  onUpdateField={(field, value) => setValue(field, value)}
                   onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}
                 />
               </div>

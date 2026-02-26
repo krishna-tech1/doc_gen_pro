@@ -181,27 +181,11 @@ def generate_circular(data: dict, ai_content: dict = None) -> str:
 
     doc.add_paragraph()
 
-    # Ref No and Date Table
-    ref_table = doc.add_table(rows=1, cols=2)
-    ref_table.autofit = False
-    ref_table.columns[0].width = Inches(3.25)
-    ref_table.columns[1].width = Inches(3.25)
-    
-    cell_l = ref_table.cell(0, 0)
-    p_l = cell_l.paragraphs[0]
-    p_l.add_run("Ref No: ____________").font.size = Pt(12)
-    
-    cell_r = ref_table.cell(0, 1)
-    p_r = cell_r.paragraphs[0]
-    p_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    
+    # Date Align Right
+    d_para = doc.add_paragraph()
+    d_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     date_val = data.get("date", "")
-    end_date = data.get("end_date")
-    date_str = f"Date: {date_val}"
-    if end_date:
-        date_str += f" to {end_date}"
-    
-    p_r.add_run(date_str).font.size = Pt(12)
+    d_para.add_run(f"Date: {date_val}").font.size = Pt(12)
 
     doc.add_paragraph()
     doc.add_paragraph()
@@ -294,64 +278,84 @@ def generate_circular(data: dict, ai_content: dict = None) -> str:
 
 # ── Proposal ──────────────────────────────────────────────────────────────────
 
-def generate_proposal(data: dict, ai_content: dict) -> str:
+def generate_proposal(data: dict, ai_content: dict = None) -> str:
     """
-    Build a structured Event Proposal .docx.
-    data keys: event_name, objectives, target_audience, budget
+    Build a structured Permission Letter Proposal .docx based on user template.
     """
     doc = Document()
     _set_page_margins(doc)
-    _add_logo_header(doc, "EVENT PROPOSAL")
-    _add_divider(doc)
+    doc.styles['Normal'].font.name = 'Times New Roman'
+    doc.styles['Normal'].font.size = Pt(12)
 
-    t = doc.add_heading(data["event_name"].upper(), level=1)
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    t.runs[0].font.color.rgb = HEADING_COLOR
+    # Date
+    p_date = doc.add_paragraph()
+    p_date.add_run(f"Date: {data.get('proposal_date', '')}").font.size = Pt(12)
+    doc.add_paragraph()
+
+    # From Block
+    p_from_label = doc.add_paragraph()
+    p_from_label.add_run("From").bold = True
+    
+    p_from = doc.add_paragraph()
+    p_from.add_run(f"{data.get('from_name', '')}\n").font.size = Pt(12)
+    p_from.add_run(f"{data.get('from_designation', '')}\n").font.size = Pt(12)
+    p_from.add_run(f"{data.get('department', '')}\n").font.size = Pt(12)
+    p_from.add_run("Avichi College of Arts and Science\n").font.size = Pt(12)
+    p_from.add_run("Virugambakkam-92").font.size = Pt(12)
+    
+    doc.add_paragraph()
+
+    # To Block
+    p_to_label = doc.add_paragraph()
+    p_to_label.add_run("To").bold = True
+    
+    p_to = doc.add_paragraph()
+    p_to.add_run("The Principal\n").font.size = Pt(12)
+    p_to.add_run("Avichi College of Arts and Science\n").font.size = Pt(12)
+    p_to.add_run("Virugambakkam-92").font.size = Pt(12)
+
+    doc.add_paragraph()
+    doc.add_paragraph("Respected Madam,")
+    doc.add_paragraph()
+
+    # Subject
+    p_sub = doc.add_paragraph()
+    p_sub.add_run(f"Subject: Permission Letter for {data.get('event_name', '')}").bold = True
+    
+    doc.add_paragraph()
+
+    # Body Paragraph 1
+    p_body1 = doc.add_paragraph()
+    p_body1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_body1.add_run(f"I propose to conduct a session on ")
+    p_body1.add_run(f"{data.get('event_topic', '')}").bold = True
+    p_body1.add_run(f" for ")
+    p_body1.add_run(f"{data.get('target_audience', '')}").bold = True
+    p_body1.add_run(f" on {data.get('event_date', '')} at {data.get('event_time', '')}.")
 
     doc.add_paragraph()
 
-    # Meta table
-    meta = [
-        ("Target Audience", data.get("target_audience", "")),
-        ("Proposed Budget", f"₹ {float(data.get('budget', 0)):,.2f}"),
-        ("Prepared Date",   datetime.now().strftime("%d %B %Y")),
-    ]
-    tbl = doc.add_table(rows=len(meta), cols=2)
-    tbl.style = "Table Grid"
-    for i, (label, value) in enumerate(meta):
-        tbl.cell(i, 0).text = label
-        tbl.cell(i, 1).text = value
-        tbl.cell(i, 0).paragraphs[0].runs[0].bold = True
+    # Body Paragraph 2
+    p_body2 = doc.add_paragraph()
+    p_body2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    desc = data.get('short_description', '...')
+    p_body2.add_run(f"The session will focus on ")
+    p_body2.add_run(f"{desc}").bold = True
+    p_body2.add_run(". It aims to provide practical exposure and enhance knowledge among students.")
 
     doc.add_paragraph()
-    _add_divider(doc)
+
+    doc.add_paragraph("I kindly request your permission to proceed with the arrangements for this event.")
+    doc.add_paragraph("Thank you for your support and cooperation.")
+
+    doc.add_paragraph()
     doc.add_paragraph()
 
-    _add_section(doc, "Introduction",        ai_content.get("introduction", ""))
-    _add_section(doc, "Objectives",          ai_content.get("objectives", ""))
-    _add_section(doc, "Expected Outcomes",   ai_content.get("outcome", ""))
-    _add_section(doc, "Conclusion",          ai_content.get("conclusion", ""))
-
-    # Budget breakdown placeholder
-    doc.add_heading("Budget Breakdown", level=2).runs[0].font.color.rgb = HEADING_COLOR
-    budget_tbl = doc.add_table(rows=4, cols=2)
-    budget_tbl.style = "Table Grid"
-    headers = [("Item", "Estimated Cost (₹)")]
-    rows_data = [
-        ("Venue & Logistics",     ""),
-        ("Guest Honorarium",      ""),
-        ("Printing & Stationery", ""),
-        ("Miscellaneous",         ""),
-    ]
-    for i, (item, cost) in enumerate(rows_data):
-        budget_tbl.cell(i, 0).text = item
-        budget_tbl.cell(i, 1).text = cost
-
-    # Approval block
-    doc.add_paragraph()
-    sig_para = doc.add_paragraph()
-    sig_para.add_run("Submitted By:\n\n\n_________________________\n")
-    sig_para.add_run("Event Coordinator").bold = True
+    # Closing
+    p_closing = doc.add_paragraph()
+    p_closing.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_closing.add_run("Yours sincerely,\n\n").font.size = Pt(12)
+    p_closing.add_run(f"{data.get('from_name', '')}").bold = True
 
     path = _unique_filename("proposal")
     doc.save(path)

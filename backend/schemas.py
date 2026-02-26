@@ -25,7 +25,6 @@ class SDGGoalSchema(BaseModel):
 class CircularRequest(BaseModel):
     event_name:  str            = Field(..., example="Annual Sports Day")
     date:        str            = Field(..., example="2025-03-15")
-    end_date:    Optional[str]  = Field(None, example="2025-03-16")
     time:        Optional[str]  = Field(None, example="09:00 AM")
     department:  str            = Field(..., example="Physical Education")
     chief_guest: str            = Field(..., example="Dr. A. Ramesh, Principal")
@@ -42,10 +41,16 @@ class CircularResponse(BaseModel):
 # ─── Proposal ────────────────────────────────────────────────────────────────
 
 class ProposalRequest(BaseModel):
-    event_name:      str   = Field(..., example="National Science Symposium")
-    objectives:      str   = Field(..., example="Promote research culture among students")
-    target_audience: str   = Field(..., example="Undergraduate and postgraduate students")
-    budget:          float = Field(..., example=50000.0)
+    proposal_date:    str  = Field(..., example="2025-03-01")
+    from_name:        str  = Field(..., example="Dr. J. Doe")
+    from_designation: str  = Field(..., example="Assistant Professor")
+    department:       str  = Field(..., example="BCA")
+    event_name:       str  = Field(..., example="Workshop on AI")
+    event_topic:      str  = Field(..., example="Machine Learning")
+    target_audience:  str  = Field(..., example="All BCA Students")
+    event_date:       str  = Field(..., example="2025-03-15")
+    event_time:       str  = Field(..., example="10:00 AM")
+    short_description: str = Field(..., example="Practical training on ML models.")
 
 
 class ProposalResponse(BaseModel):

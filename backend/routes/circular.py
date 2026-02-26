@@ -34,7 +34,6 @@ def create_circular(payload: CircularRequest, db: Session = Depends(get_db)):
     context = {
         "event_name":  payload.event_name,
         "date":        payload.date,
-        "end_date":    payload.end_date,
         "department":  payload.department,
         "chief_guest": payload.chief_guest,
         "description": payload.description,

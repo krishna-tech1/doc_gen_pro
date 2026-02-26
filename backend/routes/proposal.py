@@ -25,14 +25,8 @@ def create_proposal(payload: ProposalRequest, db: Session = Depends(get_db)):
     3. Build a DOCX proposal.
     4. Return preview + download URL.
     """
-    context = {
-        "event_name":      payload.event_name,
-        "objectives":      payload.objectives,
-        "target_audience": payload.target_audience,
-        "budget":          str(payload.budget),
-    }
-
-    ai_content = generate_content("event proposal", context)
+    context = payload.model_dump()
+    ai_content = None # Using fixed template now
 
     # ── Persist to DB (optional) ──────────────────────────────────────────────
     event_id = None
