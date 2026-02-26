@@ -58,6 +58,11 @@ export default function ReportGenerator() {
 
       images.forEach(file => formData.append('images', file));
 
+      // Include any manual edits from the preview
+      if (preview && Object.keys(preview).length > 0) {
+        formData.append('edited_preview', JSON.stringify(preview));
+      }
+
       const res = await generateReport(formData);
       setPreview(res.data.preview);
       setDownloadUrl(res.data.download_url);
@@ -156,8 +161,8 @@ export default function ReportGenerator() {
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${dragActive
-                        ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-indigo-500 bg-indigo-50'
+                      : 'border-gray-300 hover:border-gray-400'
                       }`}
                   >
                     <Upload size={32} className="mx-auto mb-2 text-gray-400" />
@@ -229,8 +234,10 @@ export default function ReportGenerator() {
             <CardContent className="overflow-y-auto max-h-[calc(100vh-200px)]">
               {preview && Object.keys(preview).length > 0 ? (
                 <DocumentPreview
+                  docType="report"
                   content={preview}
-                  onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
+                  onUpdateField={(field, value) => setPreview(prev => ({ ...prev, [field]: value }))}
+                  onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}
                 />
               ) : (
                 <div className="flex items-center justify-center h-64 text-gray-500">

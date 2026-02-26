@@ -33,17 +33,22 @@ async def create_report(
     num_participants: int            = Form(...),
     sdg_id:           int            = Form(...),
     date:             Optional[str]  = Form(None),
+    edited_preview:   Optional[str]  = Form(None),
     images:           List[UploadFile] = File(default=[]),
     db:               Session        = Depends(get_db),
 ):
     """
-    1. Save uploaded images and extract GPS data.
-    2. Fetch SDG details from DB (optional).
-    3. Generate AI-improved formal summary.
-    4. Persist Event + Image records (optional - continues if DB fails).
-    5. Build and return DOCX report.
+    ... (rest of docstring)
     """
     os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    # Parse edited_preview if present
+    manual_overrides = {}
+    if edited_preview:
+        try:
+            manual_overrides = json.loads(edited_preview)
+        except:
+            pass
 
     # ── Save images & extract geo-data ────────────────────────────────────────
     saved_images: List[dict] = []
@@ -98,13 +103,20 @@ async def create_report(
     }
     ai_content = generate_content("event report", context)
 
+    # ── Apply Overrides ───────────────────────────────────────────────────────
+    if manual_overrides:
+        # Override AI sections
+        for section in ["introduction", "objectives", "outcome", "sdg_alignment", "conclusion"]:
+            if section in manual_overrides:
+                ai_content[section] = manual_overrides[section]
+        
     # ── Persist Event ─────────────────────────────────────────────────────────
     event_id = None
     try:
         event = Event(
-            title      = event_title,
-            date       = date,
-            venue      = location_name,
+            title      = manual_overrides.get("event_title", event_title),
+            date       = manual_overrides.get("date", date),
+            venue      = manual_overrides.get("location_name", location_name),
             sdg_id     = sdg_id,
             ai_content = json.dumps(ai_content),
         )
@@ -129,13 +141,15 @@ async def create_report(
 
     # ── Generate DOCX ─────────────────────────────────────────────────────────
     report_data = {
-        "event_title":      event_title,
+        "report_header":    manual_overrides.get("report_header", "EVENT REPORT"),
+        "event_title":      manual_overrides.get("event_title", event_title),
         "summary":          summary,
-        "num_participants": num_participants,
-        "date":             date or "",
-        "location_name":    location_name,
+        "num_participants": manual_overrides.get("num_participants", num_participants),
+        "date":             manual_overrides.get("date", date or ""),
+        "location_name":    manual_overrides.get("location_name", location_name),
         "sdg_number":       sdg_number,
         "sdg_name":         sdg_name,
+        "sdg_goal":         manual_overrides.get("sdg_goal"), # Pass override if exists
     }
     doc_path = generate_report(report_data, ai_content, saved_paths, sdg_description)
     filename = os.path.basename(doc_path)

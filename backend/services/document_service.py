@@ -172,20 +172,22 @@ def generate_circular(data: dict, ai_content: dict = None) -> str:
     _add_logo_header(doc, "")
 
     # Title
-    t = doc.add_heading("CIRCULAR", level=1)
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    t.runs[0].font.name = 'Times New Roman'
-    t.runs[0].font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-    t.runs[0].font.size = Pt(14)
-    t.runs[0].bold = True
+    t_para = doc.add_paragraph()
+    t_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title_text = data.get('document_title', 'CIRCULAR')
+    run_t = t_para.add_run(title_text)
+    run_t.font.name = 'Times New Roman'
+    run_t.font.size = Pt(14)
+    run_t.bold = True
+    run_t.underline = True
 
     doc.add_paragraph()
 
     # Date Align Right
     d_para = doc.add_paragraph()
     d_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    date_val = data.get("date", "")
-    d_para.add_run(f"Date: {date_val}").font.size = Pt(12)
+    date_line = data.get('date_line') or f"Date: {data.get('date', '')}"
+    d_para.add_run(date_line).font.size = Pt(12)
 
     doc.add_paragraph()
     doc.add_paragraph()
@@ -198,74 +200,70 @@ def generate_circular(data: dict, ai_content: dict = None) -> str:
         p_body.paragraph_format.line_spacing = 1.15
         p_body.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     else:
-        # Use specific Template Body
+        # Paragraph 1
         p_body = doc.add_paragraph()
         p_body.paragraph_format.line_spacing = 1.15
         p_body.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         
-        dept = data.get("department", "...")
-        event = data.get("event_name", "...")
-        time_val = data.get("time") or "___ AM/PM"
-        
-        p_body.add_run("This is to inform that the ")
-        run_dept = p_body.add_run(f"Department of {dept}")
-        run_dept.bold = True
-        
-        p_body.add_run(" will be organizing ")
-        run_event = p_body.add_run(f"{event}")
-        run_event.bold = True
-        
-        p_body.add_run(f" on {date_val} at {time_val} in the college premises.")
+        if data.get('circular_body_1'):
+             p_body.add_run(data['circular_body_1'])
+        else:
+            dept = data.get("department", "...")
+            event = data.get("event_name", "...")
+            time_val = data.get("time") or "___ AM/PM"
+            date_val = data.get("date", "")
+            p_body.add_run("This is to inform that the ")
+            p_body.add_run(f"Department of {dept}").bold = True
+            p_body.add_run(" will be organizing ")
+            p_body.add_run(f"{event}").bold = True
+            p_body.add_run(f" on {date_val} at {time_val} in the college premises.")
         
         doc.add_paragraph()
         
-        p_aim = doc.add_paragraph("The program aims to enrich students with knowledge and practical exposure in the relevant field.")
+        # Paragraph 2
+        p_aim = doc.add_paragraph()
         p_aim.paragraph_format.line_spacing = 1.15
+        p_aim.add_run(data.get('circular_body_2', "The program aims to enrich students with knowledge and practical exposure in the relevant field."))
         
         doc.add_paragraph()
         
+        # Paragraph 3
         p_guest = doc.add_paragraph()
-        p_guest.add_run("We are honored to have ")
-        run_guest = p_guest.add_run(data.get("chief_guest", "..."))
-        run_guest.bold = True
-        p_guest.add_run(" as the Chief Guest for this event.")
         p_guest.paragraph_format.line_spacing = 1.15
+        if data.get('circular_body_3'):
+            p_guest.add_run(data['circular_body_3'])
+        else:
+            p_guest.add_run("We are honored to have ")
+            p_guest.add_run(data.get("chief_guest", "...")).bold = True
+            p_guest.add_run(" as the Chief Guest for this event.")
         
         doc.add_paragraph()
         
-        p_note = doc.add_paragraph("All concerned are requested to take note of the same and participate actively.")
+        # Paragraph 4
+        p_note = doc.add_paragraph()
         p_note.paragraph_format.line_spacing = 1.15
+        p_note.add_run(data.get('circular_body_4', "All concerned are requested to take note of the same and participate actively."))
 
     doc.add_paragraph()
     doc.add_paragraph()
 
     # Signature block
-    sig_table = doc.add_table(rows=1, cols=2)
-    sig_table.autofit = False
-    sig_table.columns[0].width = Inches(3.25)
-    sig_table.columns[1].width = Inches(3.25)
-    
-    sig_l = sig_table.cell(0, 0)
-    p_sig_l = sig_l.paragraphs[0]
-    p_sig_l.add_run("Event Coordinator").bold = True
-    
-    sig_r = sig_table.cell(0, 1)
-    p_sig_r = sig_r.paragraphs[0]
-    p_sig_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    p_sig_r.add_run("Principal").bold = True
+    p_sig = doc.add_paragraph()
+    p_sig.add_run(data.get('footer_left', "Event Coordinator") + "\t\t\t\t\t" + data.get('footer_right', "Principal")).bold = True
 
     doc.add_paragraph()
     
     # Copy To
     p_copy = doc.add_paragraph()
-    run_copy = p_copy.add_run("Copy To:")
-    run_copy.bold = True
+    p_copy.add_run(data.get('copy_to_label', "Copy To:")).bold = True
     
-    p_h = doc.add_paragraph("• All HODs")
-    p_h.paragraph_format.left_indent = Inches(0.5)
-    
-    p_iq = doc.add_paragraph("• IQAC")
-    p_iq.paragraph_format.left_indent = Inches(0.5)
+    if data.get('copy_to_list'):
+        doc.add_paragraph(data['copy_to_list']).paragraph_format.left_indent = Inches(0.5)
+    else:
+        p_h = doc.add_paragraph("• All HODs")
+        p_h.paragraph_format.left_indent = Inches(0.5)
+        p_iq = doc.add_paragraph("• IQAC")
+        p_iq.paragraph_format.left_indent = Inches(0.5)
 
     path = _unique_filename("circular")
     doc.save(path)
@@ -289,69 +287,77 @@ def generate_proposal(data: dict, ai_content: dict = None) -> str:
 
     # Date
     p_date = doc.add_paragraph()
-    p_date.add_run(f"Date: {data.get('proposal_date', '')}").font.size = Pt(12)
+    date_line = data.get('proposal_date_line') or f"Date: {data.get('proposal_date', '')}"
+    p_date.add_run(date_line).font.size = Pt(12)
     doc.add_paragraph()
 
     # From Block
     p_from_label = doc.add_paragraph()
-    p_from_label.add_run("From").bold = True
+    p_from_label.add_run(data.get('from_label', "From")).bold = True
     
     p_from = doc.add_paragraph()
-    p_from.add_run(f"{data.get('from_name', '')}\n").font.size = Pt(12)
-    p_from.add_run(f"{data.get('from_designation', '')}\n").font.size = Pt(12)
-    p_from.add_run(f"{data.get('department', '')}\n").font.size = Pt(12)
-    p_from.add_run("Avichi College of Arts and Science\n").font.size = Pt(12)
-    p_from.add_run("Virugambakkam-92").font.size = Pt(12)
+    p_from.add_run(data.get('from_name_line', data.get('from_name', '')) + "\n").font.size = Pt(12)
+    p_from.add_run(data.get('from_designation_line', data.get('from_designation', '')) + "\n").font.size = Pt(12)
+    p_from.add_run(data.get('department_line', data.get('department', '')) + "\n").font.size = Pt(12)
+    p_from.add_run(data.get('college_name_from', "Avichi College of Arts and Science") + "\n").font.size = Pt(12)
+    p_from.add_run(data.get('college_address_from', "Virugambakkam-92")).font.size = Pt(12)
     
     doc.add_paragraph()
 
     # To Block
     p_to_label = doc.add_paragraph()
-    p_to_label.add_run("To").bold = True
+    p_to_label.add_run(data.get('to_label', "To")).bold = True
     
     p_to = doc.add_paragraph()
-    p_to.add_run("The Principal\n").font.size = Pt(12)
-    p_to.add_run("Avichi College of Arts and Science\n").font.size = Pt(12)
-    p_to.add_run("Virugambakkam-92").font.size = Pt(12)
+    p_to.add_run(data.get('to_recipient', "The Principal") + "\n").font.size = Pt(12)
+    p_to.add_run(data.get('college_name_to', "Avichi College of Arts and Science") + "\n").font.size = Pt(12)
+    p_to.add_run(data.get('college_address_to', "Virugambakkam-92")).font.size = Pt(12)
 
     doc.add_paragraph()
-    doc.add_paragraph("Respected Madam,")
+    doc.add_paragraph(data.get('salutation', "Respected Madam,"))
     doc.add_paragraph()
 
     # Subject
     p_sub = doc.add_paragraph()
-    p_sub.add_run(f"Subject: Permission Letter for {data.get('event_name', '')}").bold = True
+    sub_line = data.get('subject_line') or f"Subject: Permission Letter for {data.get('event_name', '')}"
+    p_sub.add_run(sub_line).bold = True
     
     doc.add_paragraph()
 
     # Body Paragraph 1
     p_body1 = doc.add_paragraph()
     p_body1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    p_body1.add_run(f"I propose to conduct a session on ")
-    p_body1.add_run(f"{data.get('event_topic', '')}").bold = True
-    p_body1.add_run(f" for ")
-    p_body1.add_run(f"{data.get('target_audience', '')}").bold = True
-    p_body1.add_run(f" on {data.get('event_date', '')} at {data.get('event_time', '')} in ")
-    p_body1.add_run(f"{data.get('venue', '')}").bold = True
-    p_body1.add_run(". ")
-    p_body1.add_run(f"We have invited ")
-    p_body1.add_run(f"{data.get('resource_person', '')}").bold = True
-    p_body1.add_run(" as the resource person.")
+    if data.get('proposal_body_1'):
+        p_body1.add_run(data['proposal_body_1'])
+    else:
+        p_body1.add_run(f"I propose to conduct a session on ")
+        p_body1.add_run(f"{data.get('event_topic', '')}").bold = True
+        p_body1.add_run(f" for ")
+        p_body1.add_run(f"{data.get('target_audience', '')}").bold = True
+        p_body1.add_run(f" on {data.get('event_date', '')} at {data.get('event_time', '')} in ")
+        p_body1.add_run(f"{data.get('venue', '')}").bold = True
+        p_body1.add_run(". ")
+        p_body1.add_run(f"We have invited ")
+        p_body1.add_run(f"{data.get('resource_person', '')}").bold = True
+        p_body1.add_run(" as the resource person.")
 
     doc.add_paragraph()
 
     # Body Paragraph 2
     p_body2 = doc.add_paragraph()
     p_body2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    desc = data.get('short_description', '...')
-    p_body2.add_run(f"The session will focus on ")
-    p_body2.add_run(f"{desc}").bold = True
-    p_body2.add_run(". It aims to provide practical exposure and enhance knowledge among students.")
+    if data.get('proposal_body_2'):
+        p_body2.add_run(data['proposal_body_2'])
+    else:
+        desc = data.get('short_description', '...')
+        p_body2.add_run(f"The session will focus on ")
+        p_body2.add_run(f"{desc}").bold = True
+        p_body2.add_run(". It aims to provide practical exposure and enhance knowledge among students.")
 
     doc.add_paragraph()
 
-    doc.add_paragraph("I kindly request your permission to proceed with the arrangements for this event.")
-    doc.add_paragraph("Thank you for your support and cooperation.")
+    doc.add_paragraph(data.get('request_sentence', "I kindly request your permission to proceed with the arrangements for this event."))
+    doc.add_paragraph(data.get('thanks_sentence', "Thank you for your support and cooperation."))
 
     doc.add_paragraph()
     doc.add_paragraph()
@@ -359,7 +365,8 @@ def generate_proposal(data: dict, ai_content: dict = None) -> str:
     # Closing
     p_closing = doc.add_paragraph()
     p_closing.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    p_closing.add_run("Yours sincerely,\n\n").font.size = Pt(12)
+    closing_label = data.get('closing_label', "Yours sincerely,")
+    p_closing.add_run(f"{closing_label}\n\n").font.size = Pt(12)
     p_closing.add_run(f"{data.get('from_name', '')}").bold = True
 
     path = _unique_filename("proposal")
@@ -373,25 +380,31 @@ def generate_report(data: dict, ai_content: dict, images: List[str],
                     sdg_description: Optional[str] = None) -> str:
     """
     Build a formal Event Report .docx.
-    data keys: event_title, summary, num_participants, sdg_number, location_name
+    data keys: event_title, summary, num_participants, sdg_number, location_name, report_header, sdg_goal
     """
     doc = Document()
     _set_page_margins(doc)
-    _add_logo_header(doc, "EVENT REPORT")
+    
+    # Header
+    header_text = data.get('report_header', "EVENT REPORT")
+    _add_logo_header(doc, header_text)
     _add_divider(doc)
 
-    t = doc.add_heading(data["event_title"].upper(), level=1)
+    # Title
+    title_text = (data.get("event_title") or "Event Title").upper()
+    t = doc.add_heading(title_text, level=1)
     t.alignment = WD_ALIGN_PARAGRAPH.CENTER
     t.runs[0].font.color.rgb = HEADING_COLOR
 
     doc.add_paragraph()
 
     # Summary table
+    sdg_display = data.get('sdg_goal') or f"SDG {data.get('sdg_number', '')} – {data.get('sdg_name', '')}"
     meta = [
         ("Number of Participants",  str(data.get("num_participants", ""))),
-        ("Event Date",              data.get("date", datetime.now().strftime("%d %B %Y"))),
+        ("Event Date",              data.get("date") or datetime.now().strftime("%d %B %Y")),
         ("Location",                data.get("location_name", "On Campus")),
-        ("SDG Goal",                f"SDG {data.get('sdg_number', '')} – {data.get('sdg_name', '')}"),
+        ("SDG Goal",                sdg_display),
     ]
     tbl = doc.add_table(rows=len(meta), cols=2)
     tbl.style = "Table Grid"
@@ -408,7 +421,7 @@ def generate_report(data: dict, ai_content: dict, images: List[str],
     _add_section(doc, "Objectives",           ai_content.get("objectives", ""))
     _add_section(doc, "Proceedings Summary",  ai_content.get("outcome", ""))
     _add_section(doc, "SDG Alignment",
-                 sdg_description or ai_content.get("conclusion", ""))
+                 data.get('sdg_alignment') or sdg_description or ai_content.get("sdg_alignment") or ai_content.get("conclusion", ""))
     _add_section(doc, "Conclusion",           ai_content.get("conclusion", ""))
 
     # Images
