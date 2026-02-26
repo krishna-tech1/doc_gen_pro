@@ -32,13 +32,13 @@ export default function CircularGenerator() {
   };
 
   return (
-    <MainLayout 
+    <MainLayout
       title="Circular Generator"
       subtitle="Create formal institutional circulars with AI enhancement"
     >
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
         {/* Form Section */}
-        <div>
+        <div className="lg:col-span-5">
           <Card>
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Document Details</h3>
@@ -48,69 +48,82 @@ export default function CircularGenerator() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
                 <FormField
-                  label="Circular Title"
+                  label="Event Name"
                   required
-                  error={errors.title?.message}
+                  error={errors.event_name?.message}
                 >
                   <Input
                     placeholder="e.g., Annual Sports Day 2025"
-                    {...register('title', { required: 'Title is required' })}
+                    {...register('event_name', { required: 'Event name is required' })}
                   />
                 </FormField>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
-                    label="Date"
+                    label="Start Date"
                     required
                     error={errors.date?.message}
                   >
                     <Input
                       type="date"
-                      {...register('date', { required: 'Date is required' })}
+                      {...register('date', { required: 'Start date is required' })}
                     />
                   </FormField>
 
                   <FormField
-                    label="Time"
-                    required
+                    label="End Date (Optional)"
+                    error={errors.end_date?.message}
+                  >
+                    <Input
+                      type="date"
+                      {...register('end_date')}
+                    />
+                  </FormField>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    label="Time (Optional)"
                     error={errors.time?.message}
                   >
                     <Input
                       type="time"
-                      {...register('time', { required: 'Time is required' })}
+                      {...register('time')}
+                    />
+                  </FormField>
+
+                  <FormField
+                    label="Department"
+                    required
+                    error={errors.department?.message}
+                  >
+                    <Input
+                      placeholder="e.g., Computer Applications"
+                      {...register('department', { required: 'Department is required' })}
                     />
                   </FormField>
                 </div>
 
                 <FormField
-                  label="Venue"
-                  required
-                  error={errors.venue?.message}
-                >
-                  <Input
-                    placeholder="e.g., College Auditorium"
-                    {...register('venue', { required: 'Venue is required' })}
-                  />
-                </FormField>
-
-                <FormField
-                  label="Department"
-                  required
-                  error={errors.department?.message}
-                >
-                  <Input
-                    placeholder="e.g., Physical Education"
-                    {...register('department', { required: 'Department is required' })}
-                  />
-                </FormField>
-
-                <FormField
                   label="Chief Guest"
+                  required
                   error={errors.chief_guest?.message}
                 >
                   <Input
                     placeholder="e.g., Dr. A. Ramesh, Principal"
-                    {...register('chief_guest')}
+                    {...register('chief_guest', { required: 'Chief Guest is required' })}
+                  />
+                </FormField>
+
+                <FormField
+                  label="Custom Description (Optional)"
+                  subtitle="If filled, this will be used as the body"
+                  error={errors.description?.message}
+                >
+                  <Textarea
+                    rows={5}
+                    placeholder="Enter custom content for the circular body..."
+                    {...register('description')}
                   />
                 </FormField>
 
@@ -123,9 +136,9 @@ export default function CircularGenerator() {
               </CardContent>
 
               <CardFooter>
-                <Button variant="secondary" size="md">Cancel</Button>
-                <Button 
-                  type="submit" 
+                <Button variant="secondary" size="md" onClick={() => navigate(-1)}>Cancel</Button>
+                <Button
+                  type="submit"
                   loading={isGenerating}
                   size="md"
                 >
@@ -133,20 +146,25 @@ export default function CircularGenerator() {
                 </Button>
               </CardFooter>
             </form>
+            <CardContent className="pt-0">
+              <div className="text-xs text-gray-400 mt-2">
+                * Note: If description is left blank, AI will generate the body based on the template.
+              </div>
+            </CardContent>
           </Card>
         </div>
 
         {/* Preview Section */}
-        <div>
-          <Card className="h-full">
+        <div className="lg:col-span-7 sticky top-8">
+          <Card className="min-h-[calc(100vh-12rem)] flex flex-col">
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Live Preview</h3>
               <p className="text-sm text-gray-500 mt-1">See how your document will look</p>
             </CardHeader>
 
-            <CardContent className="overflow-y-auto max-h-[calc(100vh-200px)]">
+            <CardContent className="flex-1 overflow-y-auto max-h-[calc(100vh-300px)] custom-scrollbar">
               {preview && Object.keys(preview).length > 0 ? (
-                <DocumentPreview 
+                <DocumentPreview
                   content={preview}
                   onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
                 />

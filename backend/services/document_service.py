@@ -160,10 +160,10 @@ def _add_divider(doc: Document):
 
 # ── Circular ──────────────────────────────────────────────────────────────────
 
-def generate_circular(data: dict, ai_content: dict) -> str:
+def generate_circular(data: dict, ai_content: dict = None) -> str:
     """
-    Build a formatted Circular .docx matching the new format.
-    data keys: title, date, time, venue, department, chief_guest
+    Build a formatted Circular .docx matching the user's specific template.
+    data keys: event_name, date, end_date, time, department, chief_guest, description
     """
     doc  = Document()
     _set_page_margins(doc)
@@ -189,47 +189,68 @@ def generate_circular(data: dict, ai_content: dict) -> str:
     
     cell_l = ref_table.cell(0, 0)
     p_l = cell_l.paragraphs[0]
-    p_l.add_run("Ref No: Acas/BCA/Ext/Cir/25–26").font.size = Pt(12)
+    p_l.add_run("Ref No: ____________").font.size = Pt(12)
     
     cell_r = ref_table.cell(0, 1)
     p_r = cell_r.paragraphs[0]
     p_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    date_val = data.get("date", datetime.now().strftime("%d/%m/%Y"))
-    p_r.add_run(f"Date: {date_val}").font.size = Pt(12)
+    
+    date_val = data.get("date", "")
+    end_date = data.get("end_date")
+    date_str = f"Date: {date_val}"
+    if end_date:
+        date_str += f" to {end_date}"
+    
+    p_r.add_run(date_str).font.size = Pt(12)
 
     doc.add_paragraph()
     doc.add_paragraph()
 
     # Main Body Text
-    p_body = doc.add_paragraph()
-    p_body.paragraph_format.line_spacing = 1.15
-    
-    run1 = p_body.add_run("This is to inform that the ")
-    
-    dept = data.get("department", "Computer Applications")
-    run2 = p_body.add_run(f"Department of {dept}")
-    run2.bold = True
-    
-    run3 = p_body.add_run(" will be organizing an ")
-    
-    title = data.get("title", "Extension Activity – Hands-on Training with Canva")
-    run4 = p_body.add_run(f"{title}")
-    run4.bold = True
-    
-    venue = data.get("venue", "Avichi School")
-    time_val = data.get("time", "10:00 AM")
-    run5 = p_body.add_run(f" for the students of XI at {venue} on {date_val} at {time_val}.")
-
-    doc.add_paragraph()
-
-    p_aim = doc.add_paragraph("The program aims to enhance digital skills and creativity among school students through practical learning.")
-    p_aim.paragraph_format.line_spacing = 1.15
-    p_aim.runs[0].font.size = Pt(12)
-
-    doc.add_paragraph()
-
-    p_note = doc.add_paragraph("All concerned are requested to take note of the same.")
-    p_note.paragraph_format.line_spacing = 1.15
+    description = data.get("description")
+    if description and description.strip():
+        # User provided custom body - use ONLY this
+        p_body = doc.add_paragraph(description)
+        p_body.paragraph_format.line_spacing = 1.15
+        p_body.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    else:
+        # Use specific Template Body
+        p_body = doc.add_paragraph()
+        p_body.paragraph_format.line_spacing = 1.15
+        p_body.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        
+        dept = data.get("department", "...")
+        event = data.get("event_name", "...")
+        time_val = data.get("time") or "___ AM/PM"
+        
+        p_body.add_run("This is to inform that the ")
+        run_dept = p_body.add_run(f"Department of {dept}")
+        run_dept.bold = True
+        
+        p_body.add_run(" will be organizing ")
+        run_event = p_body.add_run(f"{event}")
+        run_event.bold = True
+        
+        p_body.add_run(f" on {date_val} at {time_val} in the college premises.")
+        
+        doc.add_paragraph()
+        
+        p_aim = doc.add_paragraph("The program aims to enrich students with knowledge and practical exposure in the relevant field.")
+        p_aim.paragraph_format.line_spacing = 1.15
+        
+        doc.add_paragraph()
+        
+        p_guest = doc.add_paragraph()
+        p_guest.add_run("We are honored to have ")
+        run_guest = p_guest.add_run(data.get("chief_guest", "..."))
+        run_guest.bold = True
+        p_guest.add_run(" as the Chief Guest for this event.")
+        p_guest.paragraph_format.line_spacing = 1.15
+        
+        doc.add_paragraph()
+        
+        p_note = doc.add_paragraph("All concerned are requested to take note of the same and participate actively.")
+        p_note.paragraph_format.line_spacing = 1.15
 
     doc.add_paragraph()
     doc.add_paragraph()
@@ -242,14 +263,12 @@ def generate_circular(data: dict, ai_content: dict) -> str:
     
     sig_l = sig_table.cell(0, 0)
     p_sig_l = sig_l.paragraphs[0]
-    run_sig_l = p_sig_l.add_run("Event Coordinator")
-    run_sig_l.bold = True
+    p_sig_l.add_run("Event Coordinator").bold = True
     
     sig_r = sig_table.cell(0, 1)
     p_sig_r = sig_r.paragraphs[0]
     p_sig_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run_sig_r = p_sig_r.add_run("Principal")
-    run_sig_r.bold = True
+    p_sig_r.add_run("Principal").bold = True
 
     doc.add_paragraph()
     
@@ -258,11 +277,15 @@ def generate_circular(data: dict, ai_content: dict) -> str:
     run_copy = p_copy.add_run("Copy To:")
     run_copy.bold = True
     
-    p_h = doc.add_paragraph("All HODs")
+    p_h = doc.add_paragraph("• All HODs")
     p_h.paragraph_format.left_indent = Inches(0.5)
     
-    p_iq = doc.add_paragraph("IQAC")
+    p_iq = doc.add_paragraph("• IQAC")
     p_iq.paragraph_format.left_indent = Inches(0.5)
+
+    path = _unique_filename("circular")
+    doc.save(path)
+    return path
 
     path = _unique_filename("circular")
     doc.save(path)

@@ -69,13 +69,13 @@ export default function ReportGenerator() {
   };
 
   return (
-    <MainLayout 
+    <MainLayout
       title="Report Generator"
       subtitle="Create formal event reports with geo-tagged photos"
     >
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
         {/* Form Section */}
-        <div>
+        <div className="lg:col-span-5">
           <Card>
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Event Details</h3>
@@ -155,16 +155,15 @@ export default function ReportGenerator() {
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
-                      dragActive 
-                        ? 'border-indigo-500 bg-indigo-50' 
+                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${dragActive
+                        ? 'border-indigo-500 bg-indigo-50'
                         : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                      }`}
                   >
                     <Upload size={32} className="mx-auto mb-2 text-gray-400" />
                     <p className="text-sm font-medium text-gray-900">Drag and drop images here</p>
                     <p className="text-xs text-gray-500">or click to select</p>
-                    <input 
+                    <input
                       ref={fileInputRef}
                       type="file"
                       multiple
@@ -207,8 +206,8 @@ export default function ReportGenerator() {
 
               <CardFooter>
                 <Button variant="secondary" size="md">Cancel</Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   loading={isGenerating}
                   size="md"
                 >
@@ -220,8 +219,8 @@ export default function ReportGenerator() {
         </div>
 
         {/* Preview Section */}
-        <div>
-          <Card className="h-full">
+        <div className="lg:col-span-7 sticky top-8">
+          <Card className="min-h-[calc(100vh-12rem)] flex flex-col">
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Live Preview</h3>
               <p className="text-sm text-gray-500 mt-1">See how your document will look</p>
@@ -229,7 +228,7 @@ export default function ReportGenerator() {
 
             <CardContent className="overflow-y-auto max-h-[calc(100vh-200px)]">
               {preview && Object.keys(preview).length > 0 ? (
-                <DocumentPreview 
+                <DocumentPreview
                   content={preview}
                   onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
                 />

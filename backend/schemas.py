@@ -23,12 +23,13 @@ class SDGGoalSchema(BaseModel):
 # ─── Circular ────────────────────────────────────────────────────────────────
 
 class CircularRequest(BaseModel):
-    title:       str  = Field(..., example="Annual Sports Day")
-    date:        str  = Field(..., example="2025-03-15")
-    time:        str  = Field(..., example="09:00 AM")
-    venue:       str  = Field(..., example="College Auditorium")
-    department:  str  = Field(..., example="Physical Education")
-    chief_guest: str  = Field(..., example="Dr. A. Ramesh, Principal")
+    event_name:  str            = Field(..., example="Annual Sports Day")
+    date:        str            = Field(..., example="2025-03-15")
+    end_date:    Optional[str]  = Field(None, example="2025-03-16")
+    time:        Optional[str]  = Field(None, example="09:00 AM")
+    department:  str            = Field(..., example="Physical Education")
+    chief_guest: str            = Field(..., example="Dr. A. Ramesh, Principal")
+    description: Optional[str]  = Field(None, example="Custom body content for the circular.")
 
 
 class CircularResponse(BaseModel):

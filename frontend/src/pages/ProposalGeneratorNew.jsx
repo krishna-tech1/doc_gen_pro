@@ -31,13 +31,13 @@ export default function ProposalGenerator() {
   };
 
   return (
-    <MainLayout 
+    <MainLayout
       title="Proposal Generator"
       subtitle="Create structured event proposals with AI enhancement"
     >
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
         {/* Form Section */}
-        <div>
+        <div className="lg:col-span-5">
           <Card>
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Proposal Details</h3>
@@ -104,8 +104,8 @@ export default function ProposalGenerator() {
 
               <CardFooter>
                 <Button variant="secondary" size="md">Cancel</Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   loading={isGenerating}
                   size="md"
                 >
@@ -117,8 +117,8 @@ export default function ProposalGenerator() {
         </div>
 
         {/* Preview Section */}
-        <div>
-          <Card className="h-full">
+        <div className="lg:col-span-7 sticky top-8">
+          <Card className="min-h-[calc(100vh-12rem)] flex flex-col">
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Live Preview</h3>
               <p className="text-sm text-gray-500 mt-1">See how your document will look</p>
@@ -126,7 +126,7 @@ export default function ProposalGenerator() {
 
             <CardContent className="overflow-y-auto max-h-[calc(100vh-200px)]">
               {preview && Object.keys(preview).length > 0 ? (
-                <DocumentPreview 
+                <DocumentPreview
                   content={preview}
                   onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
                 />

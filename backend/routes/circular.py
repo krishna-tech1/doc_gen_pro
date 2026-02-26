@@ -32,25 +32,28 @@ def create_circular(payload: CircularRequest, db: Session = Depends(get_db)):
     4. Return preview JSON + download URL.
     """
     context = {
-        "title":       payload.title,
+        "event_name":  payload.event_name,
         "date":        payload.date,
-        "venue":       payload.venue,
+        "end_date":    payload.end_date,
         "department":  payload.department,
         "chief_guest": payload.chief_guest,
+        "description": payload.description,
     }
 
-    # ── AI generation ─────────────────────────────────────────────────────────
-    ai_content = generate_content("circular", context)
+    # ── AI generation (Only if description is not provided) ───────────────────
+    ai_content = None
+    if not payload.description:
+        ai_content = generate_content("circular", context)
 
     # ── Persist to DB (optional) ──────────────────────────────────────────────
     event_id = None
     try:
         event = Event(
-            title      = payload.title,
+            title      = payload.event_name,
             department = payload.department,
             date       = payload.date,
-            venue      = payload.venue,
-            ai_content = json.dumps(ai_content),
+            venue      = "College Premises",
+            ai_content = json.dumps(ai_content) if ai_content else "Custom Body Used",
         )
         db.add(event)
         db.commit()

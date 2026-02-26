@@ -18,12 +18,12 @@ export const DocumentPreview = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full">
       {/* Print-like preview */}
-      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white rounded-md p-10 shadow-lg border border-gray-100 mb-8 mx-auto max-w-[800px] min-h-[1056px]">
         {/* Actual Header Image loaded into Live Preview */}
-        <div className="w-full mb-6 flex items-center justify-center">
-          <img src="/logo.jpeg" alt="College Header" className="max-w-full h-auto object-contain" style={{ maxHeight: '120px' }} />
+        <div className="w-full mb-10 flex items-center justify-center">
+          <img src="/logo.jpeg" alt="College Header" className="max-w-full h-auto object-contain" style={{ maxHeight: '140px' }} />
         </div>
 
         {/* Content sections strictly matching the DOCX */}
