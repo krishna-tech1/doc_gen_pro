@@ -206,73 +206,75 @@ export const DocumentPreview = ({
 
           {/* REPORT VIEW */}
           {docType === 'report' && (
-            <div className="space-y-8">
-              <div className="text-center font-bold text-[16pt] mb-2 text-indigo-900">
+            <div className="space-y-6">
+              <div className="text-center font-bold text-[16pt] mb-2">
                 <EditableField field="report_header">EVENT REPORT</EditableField>
               </div>
 
-              <div className="text-center font-bold text-[18pt] uppercase tracking-tight border-b-2 border-indigo-100 pb-4 mb-8">
-                <EditableField field="event_title">{content.event_title || "EVENT TITLE"}</EditableField>
-              </div>
-
-              {/* Meta Table */}
-              <div className="grid grid-cols-2 border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-slate-50 p-4 border-r border-b border-gray-300 font-bold">Number of Participants</div>
-                <div className="p-4 border-b border-gray-300">
-                  <EditableField field="num_participants">{content.num_participants || "..."}</EditableField>
+              {/* Meta Details Block */}
+              <div className="space-y-2 mb-8">
+                <div className="flex gap-2">
+                  <span className="font-bold">Event Name:</span>
+                  <EditableField field="event_title">{content.event_title || "..."}</EditableField>
                 </div>
-
-                <div className="bg-slate-50 p-4 border-r border-b border-gray-300 font-bold">Event Date</div>
-                <div className="p-4 border-b border-gray-300">
+                <div className="flex gap-2">
+                  <span className="font-bold">Organized by:</span>
+                  <EditableField field="department">{content.department || "..."}</EditableField>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-bold">Date:</span>
                   <EditableField field="date">{content.date || "..."}</EditableField>
                 </div>
-
-                <div className="bg-slate-50 p-4 border-r border-b border-gray-300 font-bold">Location</div>
-                <div className="p-4 border-b border-gray-300">
-                  <EditableField field="location_name">{content.location_name || "On Campus"}</EditableField>
+                <div className="flex gap-2">
+                  <span className="font-bold">Time:</span>
+                  <EditableField field="event_time">{content.event_time || "..."}</EditableField>
                 </div>
-
-                <div className="bg-slate-50 p-4 border-r border-gray-300 font-bold">SDG Goal</div>
-                <div className="p-4">
-                  <EditableField field="sdg_goal">{content.sdg_goal || "..."}</EditableField>
+                <div className="flex gap-2">
+                  <span className="font-bold">Venue:</span>
+                  <EditableField field="location_name">{content.location_name || "..."}</EditableField>
                 </div>
               </div>
 
-              <div className="space-y-10 pt-8">
-                <div>
-                  <h3 className="text-[14pt] font-bold text-slate-800 mb-3 border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50">1. Introduction</h3>
-                  <EditableBlock field="introduction" className="text-justify leading-relaxed px-2">
-                    {content.introduction || "..."}
-                  </EditableBlock>
+              {/* Narrative Content */}
+              <div className="space-y-6">
+                <EditableBlock field="report_body_1" className="text-justify leading-relaxed">
+                  The {content.department || "..."} organized {content.event_title || "..."} on {content.date || "..."} at {content.location_name || "..."}.
+                </EditableBlock>
+
+                <EditableBlock field="report_body_2" className="text-justify leading-relaxed">
+                  The event was graced by {content.chief_guest || "..."}, who addressed the participants and shared valuable insights.
+                </EditableBlock>
+
+                <EditableBlock field="brief_description" className="text-justify leading-relaxed">
+                  {content.summary || "Summary of the event..."}
+                </EditableBlock>
+
+                <EditableBlock field="report_body_3" className="text-justify leading-relaxed">
+                  A total of {content.num_participants || "..."} participants attended the program.
+                </EditableBlock>
+
+                <EditableBlock field="report_body_conclusion" className="text-justify leading-relaxed">
+                  The event concluded successfully with positive feedback from students.
+                </EditableBlock>
+              </div>
+
+              {/* Signatures */}
+              <div className="pt-16 space-y-12">
+                <div className="space-y-1">
+                  <p className="font-bold underline">Event Coordinator</p>
+                  <p className="font-bold">
+                    <EditableField field="coordinator_name">{content.coordinator_name || "Coordinator Name"}</EditableField>
+                  </p>
                 </div>
 
-                <div>
-                  <h3 className="text-[14pt] font-bold text-slate-800 mb-3 border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50">2. Objectives</h3>
-                  <EditableBlock field="objectives" className="text-justify leading-relaxed px-2">
-                    {content.objectives || "..."}
-                  </EditableBlock>
+                <div className="pt-4">
+                  <p className="font-bold underline">Principal</p>
                 </div>
+              </div>
 
-                <div>
-                  <h3 className="text-[14pt] font-bold text-slate-800 mb-3 border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50">3. Proceedings Summary</h3>
-                  <EditableBlock field="outcome" className="text-justify leading-relaxed px-2">
-                    {content.outcome || "..."}
-                  </EditableBlock>
-                </div>
-
-                <div>
-                  <h3 className="text-[14pt] font-bold text-slate-800 mb-3 border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50">4. SDG Alignment</h3>
-                  <EditableBlock field="sdg_alignment" className="text-justify leading-relaxed px-2">
-                    {content.sdg_alignment || "..."}
-                  </EditableBlock>
-                </div>
-
-                <div>
-                  <h3 className="text-[14pt] font-bold text-slate-800 mb-3 border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50">5. Conclusion</h3>
-                  <EditableBlock field="conclusion" className="text-justify leading-relaxed px-2">
-                    {content.conclusion || "..."}
-                  </EditableBlock>
-                </div>
+              {/* Gallery Reminder */}
+              <div className="mt-20 pt-8 border-t border-dashed border-gray-200 text-center text-gray-400 text-sm italic">
+                [Event Gallery with uploaded images will be appended here in the final document]
               </div>
             </div>
           )}

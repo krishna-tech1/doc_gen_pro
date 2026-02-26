@@ -33,6 +33,11 @@ async def create_report(
     num_participants: int            = Form(...),
     sdg_id:           int            = Form(...),
     date:             Optional[str]  = Form(None),
+    event_time:       Optional[str]  = Form(None),
+    department:       Optional[str]  = Form(None),
+    chief_guest:      Optional[str]  = Form(None),
+    coordinator_name: Optional[str]  = Form(None),
+    venue:            Optional[str]  = Form(None),
     edited_preview:   Optional[str]  = Form(None),
     images:           List[UploadFile] = File(default=[]),
     db:               Session        = Depends(get_db),
@@ -88,7 +93,8 @@ async def create_report(
         print(f"[Report] SDG lookup error: {db_err}")
 
     # derive location name from first image with GPS data (fallback: On Campus)
-    location_name = next(
+    # If venue is manually provided, use it as priority
+    final_venue = venue or next(
         (img["location_name"] for img in saved_images if img["location_name"]),
         "On Campus",
     )
@@ -99,7 +105,9 @@ async def create_report(
         "summary":          summary,
         "num_participants": str(num_participants),
         "sdg_goal":         f"SDG {sdg_number} – {sdg_name}",
-        "location":         location_name,
+        "location":         final_venue,
+        "department":       department,
+        "chief_guest":      chief_guest,
     }
     ai_content = generate_content("event report", context)
 
@@ -116,7 +124,7 @@ async def create_report(
         event = Event(
             title      = manual_overrides.get("event_title", event_title),
             date       = manual_overrides.get("date", date),
-            venue      = manual_overrides.get("location_name", location_name),
+            venue      = manual_overrides.get("location_name", final_venue),
             sdg_id     = sdg_id,
             ai_content = json.dumps(ai_content),
         )
@@ -143,13 +151,23 @@ async def create_report(
     report_data = {
         "report_header":    manual_overrides.get("report_header", "EVENT REPORT"),
         "event_title":      manual_overrides.get("event_title", event_title),
-        "summary":          summary,
+        "department":       manual_overrides.get("department", department),
+        "event_time":       manual_overrides.get("event_time", event_time),
+        "chief_guest":      manual_overrides.get("chief_guest", chief_guest),
+        "coordinator_name": manual_overrides.get("coordinator_name", coordinator_name),
+        "summary":          manual_overrides.get("summary", summary),
         "num_participants": manual_overrides.get("num_participants", num_participants),
         "date":             manual_overrides.get("date", date or ""),
-        "location_name":    manual_overrides.get("location_name", location_name),
+        "location_name":    manual_overrides.get("location_name", final_venue),
         "sdg_number":       sdg_number,
         "sdg_name":         sdg_name,
-        "sdg_goal":         manual_overrides.get("sdg_goal"), # Pass override if exists
+        "sdg_goal":         manual_overrides.get("sdg_goal"),
+        # Narrative Overrides
+        "report_body_1":    manual_overrides.get("report_body_1"),
+        "report_body_2":    manual_overrides.get("report_body_2"),
+        "report_body_3":    manual_overrides.get("report_body_3"),
+        "report_body_conclusion": manual_overrides.get("report_body_conclusion") or manual_overrides.get("report_body_condlusion"),
+        "brief_description": manual_overrides.get("brief_description"),
     }
     doc_path = generate_report(report_data, ai_content, saved_paths, sdg_description)
     filename = os.path.basename(doc_path)

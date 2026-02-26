@@ -379,55 +379,126 @@ def generate_proposal(data: dict, ai_content: dict = None) -> str:
 def generate_report(data: dict, ai_content: dict, images: List[str],
                     sdg_description: Optional[str] = None) -> str:
     """
-    Build a formal Event Report .docx.
-    data keys: event_title, summary, num_participants, sdg_number, location_name, report_header, sdg_goal
+    Build a Universal Event Report .docx based on the user's reusable template.
     """
     doc = Document()
     _set_page_margins(doc)
     
-    # Header
-    header_text = data.get('report_header', "EVENT REPORT")
-    _add_logo_header(doc, header_text)
-    _add_divider(doc)
-
+    # logo.jpeg
+    logo_path = os.path.join(os.path.dirname(__file__), "..", "logo.jpeg")
+    if os.path.exists(logo_path):
+        p_logo = doc.add_paragraph()
+        p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_logo.add_run().add_picture(logo_path, width=Inches(1.5))
+    
     # Title
-    title_text = (data.get("event_title") or "Event Title").upper()
-    t = doc.add_heading(title_text, level=1)
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    t.runs[0].font.color.rgb = HEADING_COLOR
-
+    p_title = doc.add_paragraph()
+    p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_title = p_title.add_run(data.get("report_header", "EVENT REPORT"))
+    run_title.bold = True
+    run_title.font.size = Pt(16)
+    run_title.font.name = 'Times New Roman'
+    
     doc.add_paragraph()
 
-    # Summary table
-    sdg_display = data.get('sdg_goal') or f"SDG {data.get('sdg_number', '')} – {data.get('sdg_name', '')}"
-    meta = [
-        ("Number of Participants",  str(data.get("num_participants", ""))),
-        ("Event Date",              data.get("date") or datetime.now().strftime("%d %B %Y")),
-        ("Location",                data.get("location_name", "On Campus")),
-        ("SDG Goal",                sdg_display),
+    # Meta Details Block
+    # Event Name: {{EVENT_NAME}}
+    # Organized by: {{DEPARTMENT}}
+    # Date: {{EVENT_DATE}}
+    # Time: {{EVENT_TIME}}
+    # Venue: {{VENUE}}
+    
+    details = [
+        ("Event Name", data.get("event_title", "")),
+        ("Organized by", data.get("department", "")),
+        ("Date", data.get("date", "")),
+        ("Time", data.get("event_time", "")),
+        ("Venue", data.get("location_name", "")),
     ]
-    tbl = doc.add_table(rows=len(meta), cols=2)
-    tbl.style = "Table Grid"
-    for i, (label, value) in enumerate(meta):
-        tbl.cell(i, 0).text = label
-        tbl.cell(i, 1).text = value
-        tbl.cell(i, 0).paragraphs[0].runs[0].bold = True
-
-    doc.add_paragraph()
-    _add_divider(doc)
+    
+    for label, val in details:
+        p = doc.add_paragraph()
+        p.add_run(f"{label}: ").bold = True
+        p.add_run(str(val))
+    
     doc.add_paragraph()
 
-    _add_section(doc, "Introduction",         ai_content.get("introduction", ""))
-    _add_section(doc, "Objectives",           ai_content.get("objectives", ""))
-    _add_section(doc, "Proceedings Summary",  ai_content.get("outcome", ""))
-    _add_section(doc, "SDG Alignment",
-                 data.get('sdg_alignment') or sdg_description or ai_content.get("sdg_alignment") or ai_content.get("conclusion", ""))
-    _add_section(doc, "Conclusion",           ai_content.get("conclusion", ""))
+    # Narrative Content
+    # 1. The {{DEPARTMENT}} organized {{EVENT_NAME}} on {{EVENT_DATE}} at {{VENUE}}.
+    p1 = doc.add_paragraph()
+    p1.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    if data.get('report_body_1'):
+        p1.add_run(data['report_body_1'])
+    else:
+        p1.add_run(f"The {data.get('department', '...')} organized {data.get('event_title', '...')} on {data.get('date', '...')} at {data.get('location_name', '...')}.")
+    
+    doc.add_paragraph()
 
-    # Images
+    # 2. The event was graced by {{CHIEF_GUEST}}, who addressed the participants and shared valuable insights.
+    p2 = doc.add_paragraph()
+    p2.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    if data.get('report_body_2'):
+        p2.add_run(data['report_body_2'])
+    else:
+        p2.add_run(f"The event was graced by {data.get('chief_guest', '...')}, who addressed the participants and shared valuable insights.")
+    
+    doc.add_paragraph()
+
+    # 3. {{BRIEF_DESCRIPTION}} (Summary/Narrative)
+    p3 = doc.add_paragraph()
+    p3.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    # Map AI summary or manual brief description
+    brief_desc = data.get('brief_description') or ai_content.get('outcome') or data.get('summary', '')
+    p3.add_run(brief_desc)
+    
+    doc.add_paragraph()
+
+    # 4. A total of {{PARTICIPANTS}} participants attended the program.
+    p4 = doc.add_paragraph()
+    p4.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    if data.get('report_body_3'):
+        p4.add_run(data['report_body_3'])
+    else:
+        p4.add_run(f"A total of {data.get('num_participants', '...')} participants attended the program.")
+    
+    doc.add_paragraph()
+
+    # 5. The event concluded successfully with positive feedback from students.
+    p5 = doc.add_paragraph()
+    p5.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p5.add_run(data.get('report_body_conclusion', "The event concluded successfully with positive feedback from students."))
+    
+    doc.add_paragraph()
+    doc.add_paragraph()
+
+    # Signatures
+    # Event Coordinator
+    # {{COORDINATOR_NAME}}
+    # Principal
+    
+    p_coord_label = doc.add_paragraph("Event Coordinator")
+    p_coord_label.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_coord_label.runs[0].bold = True
+    
+    p_coord_name = doc.add_paragraph(data.get("coordinator_name", ""))
+    p_coord_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_coord_name.runs[0].bold = True
+    
+    doc.add_paragraph()
+    
+    p_principal = doc.add_paragraph("Principal")
+    p_principal.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_principal.runs[0].bold = True
+
+    # Images (up to 5)
     if images:
-        doc.add_heading("Event Gallery", level=2).runs[0].font.color.rgb = HEADING_COLOR
-        for img_path in images:
+        doc.add_paragraph()
+        doc.add_page_break()
+        p_gallery = doc.add_paragraph()
+        p_gallery.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_gallery.add_run("EVENT GALLERY").bold = True
+        
+        for i, img_path in enumerate(images[:5]): # Up to 5 images
             if os.path.exists(img_path):
                 p = doc.add_paragraph()
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
