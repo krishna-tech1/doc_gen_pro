@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Settings, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const Header = ({ title, subtitle = '', actions = [] }) => {
@@ -18,16 +18,10 @@ export const Header = ({ title, subtitle = '', actions = [] }) => {
             <div key={idx}>{action}</div>
           ))}
 
-          {/* Icons */}
+          {/* User Profile */}
           <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <Bell size={18} className="text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <Settings size={18} className="text-gray-600" />
-            </button>
-            <button className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-              <User size={16} className="text-indigo-600" />
+            <button className="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center hover:bg-indigo-100 transition-colors">
+              <User size={18} className="text-indigo-600" />
             </button>
           </div>
         </div>

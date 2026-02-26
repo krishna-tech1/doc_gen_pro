@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
+import ourLogo from '../../assets/our.png';
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, FileText, BarChart3, BookOpen, Home } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-
-const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: Home },
-  { path: '/circular', label: 'Circular Generator', icon: FileText },
-  { path: '/proposal', label: 'Proposal Generator', icon: BookOpen },
-  { path: '/report', label: 'Report Generator', icon: BarChart3 },
-];
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,15 +13,15 @@ export const Sidebar = () => {
       collapsed ? 'w-20' : 'w-64'
     )}>
       {/* Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
+      <div className="h-20 flex items-center justify-between px-4 border-b border-gray-100">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
-              IDA
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-gray-100">
+              <img src={ourLogo} alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-gray-900">DocGen</p>
-              <p className="text-xs text-gray-500">Automation</p>
+              <p className="text-base font-extrabold text-slate-900 leading-none">DocGen</p>
+              <p className="text-[10px] uppercase tracking-wider font-bold text-indigo-500 mt-1">Automation</p>
             </div>
           </div>
         )}
@@ -44,26 +38,21 @@ export const Sidebar = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2">
-        <div className="space-y-1">
-          {navItems.map(({ path, label, icon: Icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium',
-                  isActive
-                    ? 'bg-indigo-50 text-indigo-600 border-l-2 border-indigo-600'
-                    : 'text-gray-600 hover:bg-gray-50'
-                )
-              }
-              title={collapsed ? label : ''}
-            >
-              <Icon size={20} className="flex-shrink-0" />
-              {!collapsed && <span>{label}</span>}
-            </NavLink>
-          ))}
+      <nav className="flex-1 overflow-y-auto py-6 px-3">
+        <div className="space-y-2">
+          <NavLink
+            to="/selection"
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-bold group',
+                'bg-slate-50 text-slate-600 hover:bg-indigo-600 hover:text-white hover:shadow-lg hover:shadow-indigo-200'
+              )
+            }
+            title={collapsed ? 'Back to Selection' : ''}
+          >
+            <ArrowLeft size={20} className="flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
+            {!collapsed && <span>Back to Selection</span>}
+          </NavLink>
         </div>
       </nav>
 

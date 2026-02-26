@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';
 
 // Pages
+import LandingPage from './pages/LandingPage';
+import SelectionPage from './pages/SelectionPage';
 import Dashboard from './pages/Dashboard';
 import CircularGeneratorNew from './pages/CircularGeneratorNew';
 import ProposalGeneratorNew from './pages/ProposalGeneratorNew';
@@ -17,10 +19,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Main dashboard */}
+        {/* Landing and Selection */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/selection" element={<SelectionPage />} />
+
+        {/* Dashboard and Content */}
         <Route path="/dashboard" element={<Dashboard />} />
-        
-        {/* New SaaS-style generators */}
         <Route path="/circular" element={<CircularGeneratorNew />} />
         <Route path="/proposal" element={<ProposalGeneratorNew />} />
         <Route path="/report" element={<ReportGeneratorNew />} />
@@ -30,9 +34,8 @@ export default function App() {
         <Route path="/proposal-old" element={<ProposalPage />} />
         <Route path="/report-old" element={<ReportPage />} />
 
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        {/* Default redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
