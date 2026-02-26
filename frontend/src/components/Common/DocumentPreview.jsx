@@ -20,39 +20,54 @@ export const DocumentPreview = ({
   return (
     <div className="h-full">
       {/* Print-like preview */}
-      <div className="bg-white rounded-md p-10 shadow-lg border border-gray-100 mb-8 mx-auto max-w-[800px] min-h-[1056px]">
+      <div className="bg-white rounded-md p-12 shadow-2xl border border-gray-100 mb-8 mx-auto max-w-[850px] min-h-[1100px] transition-all">
         {/* Actual Header Image loaded into Live Preview */}
         <div className="w-full mb-10 flex items-center justify-center">
           <img src="/logo.jpeg" alt="College Header" className="max-w-full h-auto object-contain" style={{ maxHeight: '140px' }} />
         </div>
 
         {/* Content sections strictly matching the DOCX */}
-        <div className="font-serif text-black space-y-4" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt', lineHeight: 1.15 }}>
+        <div className="font-serif text-black space-y-6" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt', lineHeight: 1.5 }}>
 
-          <div className="text-center font-bold text-[14pt] mb-8">
+          <div className="text-center font-bold text-[14pt] mb-10 tracking-widest underline decoration-double underline-offset-4">
             CIRCULAR
           </div>
 
-          <div className="flex justify-between mb-8">
-            <div>Ref No: Acas/BCA/Ext/Cir/25–26</div>
-            <div>Date: {content.date || "18/02/2026"}</div>
+          <div className="flex justify-between mb-10 font-bold">
+            <div>Ref No: ____________</div>
+            <div>
+              Date: {content.date || "DD/MM/YYYY"}
+              {content.end_date ? ` to ${content.end_date}` : ""}
+            </div>
           </div>
 
-          <div className="text-justify">
-            This is to inform that the <span className="font-bold">Department of {content.department || "Computer Applications"}</span> will be organizing an <span className="font-bold">{content.title || "Extension Activity – Hands-on Training with Canva"}</span> for the students of XI at {content.venue || "Avichi School"} on {content.date || "20th February 2026"} at {content.time || "10:00 AM"}.
-          </div>
+          {content.description ? (
+            <div className="text-justify whitespace-pre-wrap leading-relaxed py-4">
+              {content.description}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="text-justify leading-relaxed">
+                This is to inform that the <span className="font-bold">Department of {content.department || "..."}</span> will be organizing <span className="font-bold">{content.event_name || "..."}</span> on {content.date || "..."} {content.time ? ` at ${content.time}` : ""} in the college premises.
+              </div>
 
-          <div className="text-justify pt-4">
-            The program aims to enhance digital skills and creativity among school students through practical learning.
-          </div>
+              <div className="text-justify">
+                The program aims to enrich students with knowledge and practical exposure in the relevant field.
+              </div>
 
-          <div className="text-justify pt-4">
-            All concerned are requested to take note of the same.
-          </div>
+              <div className="text-justify">
+                We are honored to have <span className="font-bold">{content.chief_guest || "..."}</span> as the Chief Guest for this event.
+              </div>
+
+              <div className="text-justify">
+                All concerned are requested to take note of the same and participate actively.
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Signature block */}
-        <div className="font-serif text-black mt-16 flex justify-between pt-8" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt' }}>
+        <div className="font-serif text-black mt-24 flex justify-between pt-8" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt' }}>
           <div className="text-center">
             <p className="font-bold">Event Coordinator</p>
           </div>
@@ -62,11 +77,11 @@ export const DocumentPreview = ({
         </div>
 
         {/* Copy To block */}
-        <div className="font-serif text-black mt-12" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt' }}>
+        <div className="font-serif text-black mt-16" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt' }}>
           <p className="font-bold mb-4">Copy To:</p>
-          <div className="ml-8 space-y-4">
-            <p>All HODs</p>
-            <p>IQAC</p>
+          <div className="ml-8 space-y-2 italic text-gray-700">
+            <p>• All HODs</p>
+            <p>• IQAC</p>
           </div>
         </div>
       </div>

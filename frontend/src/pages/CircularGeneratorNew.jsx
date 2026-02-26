@@ -154,25 +154,21 @@ export default function CircularGenerator() {
           </Card>
         </div>
 
-        {/* Preview Section */}
+        {/* Preview Section - Force Large View */}
         <div className="lg:col-span-7 sticky top-8">
-          <Card className="min-h-[calc(100vh-12rem)] flex flex-col">
+          <Card className="min-h-screen flex flex-col shadow-2xl border-indigo-50">
             <CardHeader>
               <h3 className="font-semibold text-gray-900">Live Preview</h3>
               <p className="text-sm text-gray-500 mt-1">See how your document will look</p>
             </CardHeader>
 
-            <CardContent className="flex-1 overflow-y-auto max-h-[calc(100vh-300px)] custom-scrollbar">
-              {preview && Object.keys(preview).length > 0 ? (
+            <CardContent className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-slate-50/50">
+              <div className="p-10">
                 <DocumentPreview
-                  content={preview}
-                  onDownload={() => window.location.href = getDownloadUrl(downloadUrl)}
+                  content={formData}
+                  onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-64 text-gray-500">
-                  <p>Fill out the form to see preview</p>
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>
