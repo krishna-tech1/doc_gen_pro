@@ -33,10 +33,16 @@ app = FastAPI(
 )
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "")
 allowed_origins = [
-    os.getenv("FRONTEND_ORIGIN", "http://localhost:5173"),
+    "http://localhost:5173",
     "http://localhost:3000",
+    "https://doc-gen-pro.vercel.app",
 ]
+
+# Add external origin if defined and not already in list
+if frontend_origin and frontend_origin not in allowed_origins:
+    allowed_origins.append(frontend_origin)
 
 app.add_middleware(
     CORSMiddleware,
