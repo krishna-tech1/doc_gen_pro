@@ -331,7 +331,12 @@ def generate_proposal(data: dict, ai_content: dict = None) -> str:
     p_body1.add_run(f"{data.get('event_topic', '')}").bold = True
     p_body1.add_run(f" for ")
     p_body1.add_run(f"{data.get('target_audience', '')}").bold = True
-    p_body1.add_run(f" on {data.get('event_date', '')} at {data.get('event_time', '')}.")
+    p_body1.add_run(f" on {data.get('event_date', '')} at {data.get('event_time', '')} in ")
+    p_body1.add_run(f"{data.get('venue', '')}").bold = True
+    p_body1.add_run(". ")
+    p_body1.add_run(f"We have invited ")
+    p_body1.add_run(f"{data.get('resource_person', '')}").bold = True
+    p_body1.add_run(" as the resource person.")
 
     doc.add_paragraph()
 

@@ -8,7 +8,8 @@ export const DocumentPreview = ({
   onDownload,
   onUpdateField,
   title = 'Document Preview',
-  compact = false
+  compact = false,
+  docType = 'circular' // default to circular
 }) => {
   const [isEditMode, setIsEditMode] = React.useState(false);
 
@@ -70,7 +71,7 @@ export const DocumentPreview = ({
       {/* Print-like preview */}
       <div className={`bg-white rounded-md p-12 shadow-2xl border mb-8 mx-auto max-w-[850px] min-h-[1100px] transition-all ${isEditMode ? 'border-indigo-300 ring-8 ring-indigo-50' : 'border-gray-100'}`}>
         {/* Only show header if NOT a proposal (user said no college header for proposal) */}
-        {!content.proposal_date && (
+        {docType !== 'proposal' && (
           <div className="w-full mb-10 flex items-center justify-center">
             <img src="/logo.jpeg" alt="College Header" className="max-w-full h-auto object-contain" style={{ maxHeight: '140px' }} />
           </div>
@@ -80,15 +81,15 @@ export const DocumentPreview = ({
         <div className="font-serif text-black space-y-6" style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '12pt', lineHeight: 1.5 }}>
 
           {/* CIRCULAR VIEW */}
-          {!content.proposal_date ? (
+          {docType !== 'proposal' ? (
             <>
               <div className="text-center font-bold text-[14pt] mb-10 tracking-widest underline decoration-double underline-offset-4">
-                CIRCULAR
+                <EditableField field="document_title">CIRCULAR</EditableField>
               </div>
 
               <div className="flex justify-end mb-10 font-bold">
                 <div>
-                  Date: {content.date || "DD/MM/YYYY"}
+                  Date: <EditableField field="date">{content.date || "DD/MM/YYYY"}</EditableField>
                 </div>
               </div>
 
@@ -99,35 +100,51 @@ export const DocumentPreview = ({
               ) : (
                 <div className="space-y-6">
                   <div className="text-justify leading-relaxed">
-                    This is to inform that the <EditableField field="department" className="font-bold">Department of {content.department || "..."}</EditableField> will be organizing <EditableField field="event_name" className="font-bold">{content.event_name || "..."}</EditableField> on {content.date || "..."} {content.time ? ` at ${content.time}` : ""} in the college premises.
+                    <EditableBlock field="circular_body_1" className="inline">
+                      This is to inform that the <span className="font-bold">Department of {content.department || "..."}</span> will be organizing <span className="font-bold">{content.event_name || "..."}</span> on {content.date || "..."} {content.time ? ` at ${content.time}` : ""} in the college premises.
+                    </EditableBlock>
                   </div>
 
-                  <div className="text-justify">
-                    The program aims to enrich students with knowledge and practical exposure in the relevant field.
+                  <div className="text-justify leading-relaxed">
+                    <EditableBlock field="circular_body_2" className="inline">
+                      The program aims to enrich students with knowledge and practical exposure in the relevant field.
+                    </EditableBlock>
                   </div>
 
-                  <div className="text-justify">
-                    We are honored to have <EditableField field="chief_guest" className="font-bold">{content.chief_guest || "..."}</EditableField> as the Chief Guest for this event.
+                  <div className="text-justify leading-relaxed">
+                    <EditableBlock field="circular_body_3" className="inline">
+                      We are honored to have <span className="font-bold">{content.chief_guest || "..."}</span> as the Chief Guest for this event.
+                    </EditableBlock>
                   </div>
 
-                  <div className="text-justify">
-                    All concerned are requested to take note of the same and participate actively.
+                  <div className="text-justify leading-relaxed">
+                    <EditableBlock field="circular_body_4" className="inline">
+                      All concerned are requested to take note of the same and participate actively.
+                    </EditableBlock>
                   </div>
                 </div>
               )}
 
               {/* Signature block for Circular */}
               <div className="mt-24 flex justify-between pt-8">
-                <div className="text-center font-bold">Event Coordinator</div>
-                <div className="text-center font-bold">Principal</div>
+                <div className="text-center font-bold">
+                  <EditableField field="footer_left">Event Coordinator</EditableField>
+                </div>
+                <div className="text-center font-bold">
+                  <EditableField field="footer_right">Principal</EditableField>
+                </div>
               </div>
 
               {/* Copy To block for Circular */}
               <div className="mt-16">
-                <p className="font-bold mb-4">Copy To:</p>
+                <p className="font-bold mb-4">
+                  <EditableField field="copy_to_label">Copy To:</EditableField>
+                </p>
                 <div className="ml-8 space-y-2 italic text-gray-700">
-                  <p>• All HODs</p>
-                  <p>• IQAC</p>
+                  <EditableBlock field="copy_to_list" className="space-y-2">
+                    <p>• All HODs</p>
+                    <p>• IQAC</p>
+                  </EditableBlock>
                 </div>
               </div>
             </>
@@ -139,27 +156,31 @@ export const DocumentPreview = ({
               </div>
 
               <div>
-                <p className="font-bold underline mb-1">From</p>
+                <p className="font-bold underline mb-1">
+                  <EditableField field="from_label">From</EditableField>
+                </p>
                 <div className="space-y-0 text-sm">
                   <p><EditableField field="from_name">{content.from_name || "Name"}</EditableField></p>
                   <p><EditableField field="from_designation">{content.from_designation || "Designation"}</EditableField></p>
                   <p><EditableField field="department">{content.department || "Department"}</EditableField></p>
-                  <p>Avichi College of Arts and Science</p>
-                  <p>Virugambakkam-92</p>
+                  <p><EditableField field="college_name_from">Avichi College of Arts and Science</EditableField></p>
+                  <p><EditableField field="college_address_from">Virugambakkam-92</EditableField></p>
                 </div>
               </div>
 
               <div>
-                <p className="font-bold underline mb-1">To</p>
+                <p className="font-bold underline mb-1">
+                  <EditableField field="to_label">To</EditableField>
+                </p>
                 <div className="space-y-0 text-sm">
-                  <p>The Principal</p>
-                  <p>Avichi College of Arts and Science</p>
-                  <p>Virugambakkam-92</p>
+                  <p><EditableField field="to_recipient">The Principal</EditableField></p>
+                  <p><EditableField field="college_name_to">Avichi College of Arts and Science</EditableField></p>
+                  <p><EditableField field="college_address_to">Virugambakkam-92</EditableField></p>
                 </div>
               </div>
 
               <div className="mt-8">
-                Respected Madam,
+                <EditableField field="salutation">Respected Madam,</EditableField>
               </div>
 
               <div className="font-bold uppercase">
@@ -167,24 +188,28 @@ export const DocumentPreview = ({
               </div>
 
               <div className="text-justify leading-relaxed">
-                I propose to conduct a session on <EditableField field="event_topic" className="font-bold">{content.event_topic || "Event Topic"}</EditableField> for <EditableField field="target_audience" className="font-bold">{content.target_audience || "Target Audience"}</EditableField> on <EditableField field="event_date">{content.event_date || "Event Date"}</EditableField> at <EditableField field="event_time">{content.event_time || "Time"}</EditableField>.
+                <EditableBlock field="proposal_body_1" className="inline">
+                  I propose to conduct a session on <span className="font-bold">{content.event_topic || "Event Topic"}</span> for <span className="font-bold">{content.target_audience || "Target Audience"}</span> on {content.event_date || "Event Date"} at {content.event_time || "Time"} in <EditableField field="venue" className="font-bold underline">{content.venue || "Venue"}</EditableField>.
+                </EditableBlock>
               </div>
 
               <div className="text-justify leading-relaxed">
-                The session will focus on <EditableBlock field="short_description" className="inline font-bold italic">{content.short_description || "Short Description"}</EditableBlock>. It aims to provide practical exposure and enhance knowledge among students.
+                <EditableBlock field="proposal_body_2" className="inline">
+                  We have invited <EditableField field="resource_person" className="font-bold underline">{content.resource_person || "Guest Name"}</EditableField> as the resource person. The session will focus on <span className="font-bold italic">{content.short_description || "Short Description"}</span>. It aims to provide practical exposure and enhance knowledge among students.
+                </EditableBlock>
               </div>
 
               <div className="text-justify">
-                I kindly request your permission to proceed with the arrangements for this event.
+                <EditableField field="request_sentence">I kindly request your permission to proceed with the arrangements for this event.</EditableField>
               </div>
 
               <div className="text-justify">
-                Thank you for your support and cooperation.
+                <EditableField field="thanks_sentence">Thank you for your support and cooperation.</EditableField>
               </div>
 
               <div className="flex flex-col items-end pt-12">
                 <div className="text-right">
-                  <p>Yours sincerely,</p>
+                  <p><EditableField field="closing_label">Yours sincerely,</EditableField></p>
                   <div className="mt-10">
                     <p className="font-bold"><EditableField field="from_name">{content.from_name || "Name"}</EditableField></p>
                   </div>

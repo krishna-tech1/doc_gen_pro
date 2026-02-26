@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { generateProposal, getDownloadUrl } from '../api';
 import { MainLayout } from '../components/Layout/MainLayout';
@@ -73,6 +74,12 @@ export default function ProposalGenerator() {
                   <FormField label="Event Topic" required error={errors.event_topic?.message}>
                     <Input placeholder="Machine Learning / UI Design" {...register('event_topic', { required: 'Required' })} />
                   </FormField>
+                  <FormField label="Resource Person / Chief Guest" required error={errors.resource_person?.message}>
+                    <Input placeholder="Name, Organization/Title" {...register('resource_person', { required: 'Required' })} />
+                  </FormField>
+                  <FormField label="Venue" required error={errors.venue?.message}>
+                    <Input placeholder="e.g. Lab 4 / Auditorium" {...register('venue', { required: 'Required' })} />
+                  </FormField>
                   <FormField label="Target Audience" required error={errors.target_audience?.message}>
                     <Input placeholder="I & II Year Students" {...register('target_audience', { required: 'Required' })} />
                   </FormField>
@@ -132,6 +139,7 @@ export default function ProposalGenerator() {
             <CardContent className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-slate-50/50">
               <div className="p-10">
                 <DocumentPreview
+                  docType="proposal"
                   content={formData}
                   onUpdateField={(field, value) => setValue(field, value)}
                   onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}

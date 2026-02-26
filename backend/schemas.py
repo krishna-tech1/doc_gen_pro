@@ -50,6 +50,8 @@ class ProposalRequest(BaseModel):
     target_audience:  str  = Field(..., example="All BCA Students")
     event_date:       str  = Field(..., example="2025-03-15")
     event_time:       str  = Field(..., example="10:00 AM")
+    venue:            str  = Field(..., example="College Auditorium")
+    resource_person:  str  = Field(..., example="Mr. X, Industry Expert")
     short_description: str = Field(..., example="Practical training on ML models.")
 
 

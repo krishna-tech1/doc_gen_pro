@@ -155,6 +155,7 @@ export default function CircularGenerator() {
             <CardContent className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-slate-50/50">
               <div className="p-10">
                 <DocumentPreview
+                  docType="circular"
                   content={formData}
                   onUpdateField={(field, value) => setValue(field, value)}
                   onDownload={downloadUrl ? () => window.location.href = getDownloadUrl(downloadUrl) : null}
