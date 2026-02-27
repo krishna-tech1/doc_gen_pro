@@ -53,7 +53,7 @@ export default function ReportGenerator() {
       formData.append('event_title', data.event_title);
       formData.append('summary', data.summary);
       formData.append('num_participants', data.num_participants);
-      formData.append('sdg_id', data.sdg_id);
+      if (data.sdg_id) formData.append('sdg_id', data.sdg_id);
       if (data.date) formData.append('date', data.date);
       if (data.event_time) formData.append('event_time', data.event_time);
       if (data.department) formData.append('department', data.department);
@@ -202,11 +202,10 @@ export default function ReportGenerator() {
 
                 <FormField
                   label="SDG Goal"
-                  required
                   error={errors.sdg_id?.message}
                 >
-                  <Select {...register('sdg_id', { required: 'Please select an SDG goal' })}>
-                    <option value="">Select UN SDG Goal</option>
+                  <Select {...register('sdg_id')}>
+                    <option value="">Select UN SDG Goal (Optional)</option>
                     {sdgGoals.map(g => (
                       <option key={g.id} value={g.id}>
                         SDG {g.number}: {g.name}

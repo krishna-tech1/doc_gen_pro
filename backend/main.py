@@ -73,7 +73,17 @@ def on_startup():
         print(f"[Startup] WARNING: Could not connect to database: {exc}")
         print("[Startup] App is running without a database. Set DATABASE_URL in .env to enable full functionality.")
 
-# ── Routers ───────────────────────────────────────────────────────────────────
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    import traceback
+    print(f"Global error: {exc}")
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc), "traceback": traceback.format_exc()}
+    )
+
+from fastapi.responses import JSONResponse
 app.include_router(circular.router, prefix="/generate-circular", tags=["Circular"])
 app.include_router(proposal.router, prefix="/generate-proposal", tags=["Proposal"])
 app.include_router(report.router,   prefix="/generate-report",   tags=["Report"])

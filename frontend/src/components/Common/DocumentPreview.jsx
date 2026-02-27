@@ -233,6 +233,12 @@ export const DocumentPreview = ({
                   <span className="font-bold">Venue:</span>
                   <EditableField field="location_name">{content.location_name || "..."}</EditableField>
                 </div>
+                {content.sdg_goal && (
+                  <div className="flex gap-2">
+                    <span className="font-bold">SDG Goal:</span>
+                    <EditableField field="sdg_goal">{content.sdg_goal}</EditableField>
+                  </div>
+                )}
               </div>
 
               {/* Narrative Content */}

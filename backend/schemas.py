@@ -34,7 +34,7 @@ class CircularRequest(BaseModel):
 class CircularResponse(BaseModel):
     message:     str
     event_id:    int
-    preview:     dict  # AI-generated content sections
+    preview:     Optional[dict] = None  # AI-generated content sections
     download_url: str
 
 
@@ -58,7 +58,7 @@ class ProposalRequest(BaseModel):
 class ProposalResponse(BaseModel):
     message:      str
     event_id:     int
-    preview:      dict
+    preview:      Optional[dict] = None
     download_url: str
 
 
@@ -67,7 +67,7 @@ class ProposalResponse(BaseModel):
 class ReportResponse(BaseModel):
     message:      str
     event_id:     int
-    preview:      dict
+    preview:      Optional[dict] = None
     download_url: str
 
 
