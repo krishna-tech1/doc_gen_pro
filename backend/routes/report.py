@@ -31,7 +31,7 @@ async def create_report(
     event_title:      str            = Form(...),
     summary:          str            = Form(...),
     num_participants: int            = Form(...),
-    sdg_id:           int            = Form(...),
+    sdg_id:           Optional[int]  = Form(None),
     date:             Optional[str]  = Form(None),
     event_time:       Optional[str]  = Form(None),
     department:       Optional[str]  = Form(None),
@@ -84,13 +84,14 @@ async def create_report(
     sdg_name        = ""
     sdg_number      = ""
     
-    try:
-        sdg = db.query(SDGGoal).filter(SDGGoal.id == sdg_id).first()
-        sdg_description = sdg.description if sdg else ""
-        sdg_name        = sdg.name        if sdg else ""
-        sdg_number      = sdg.number      if sdg else ""
-    except Exception as db_err:
-        print(f"[Report] SDG lookup error: {db_err}")
+    if sdg_id:
+        try:
+            sdg = db.query(SDGGoal).filter(SDGGoal.id == sdg_id).first()
+            sdg_description = sdg.description if sdg else ""
+            sdg_name        = sdg.name        if sdg else ""
+            sdg_number      = sdg.number      if sdg else ""
+        except Exception as db_err:
+            print(f"[Report] SDG lookup error: {db_err}")
 
     # derive location name from first image with GPS data (fallback: On Campus)
     # If venue is manually provided, use it as priority
@@ -104,11 +105,13 @@ async def create_report(
         "event_title":      event_title,
         "summary":          summary,
         "num_participants": str(num_participants),
-        "sdg_goal":         f"SDG {sdg_number} – {sdg_name}",
         "location":         final_venue,
         "department":       department,
         "chief_guest":      chief_guest,
     }
+    if sdg_number and sdg_name:
+        context["sdg_goal"] = f"SDG {sdg_number} – {sdg_name}"
+    
     ai_content = generate_content("event report", context)
 
     # ── Apply Overrides ───────────────────────────────────────────────────────
@@ -172,10 +175,26 @@ async def create_report(
     doc_path = generate_report(report_data, ai_content, saved_paths, sdg_description)
     filename = os.path.basename(doc_path)
 
+    # ── Enriched Preview for Frontend ──────────────────────────────────────────
+    preview_data = {
+        **ai_content,
+        "event_title":      event_title,
+        "department":       department,
+        "date":             date,
+        "event_time":       event_time,
+        "location_name":    final_venue,
+        "chief_guest":      chief_guest,
+        "coordinator_name": coordinator_name,
+        "num_participants": num_participants,
+        "summary":          summary
+    }
+    if sdg_number and sdg_name:
+        preview_data["sdg_goal"] = f"SDG {sdg_number}: {sdg_name}"
+
     return {
         "message":      "Event report generated successfully.",
         "event_id":     event_id or 0,
-        "preview":      ai_content,
+        "preview":      preview_data,
         "location":     location_name,
         "download_url": f"/generated/{filename}",
     }

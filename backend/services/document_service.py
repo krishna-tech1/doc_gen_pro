@@ -265,14 +265,13 @@ def generate_circular(data: dict, ai_content: dict = None) -> str:
         p_iq = doc.add_paragraph("• IQAC")
         p_iq.paragraph_format.left_indent = Inches(0.5)
 
-    path = _unique_filename("circular")
-    doc.save(path)
-    return path
-
-    path = _unique_filename("circular")
-    doc.save(path)
-    return path
-
+    try:
+        path = _unique_filename("circular")
+        doc.save(path)
+        return path
+    except Exception as e:
+        print(f"[DocumentService] Error saving circular: {e}")
+        raise RuntimeError(f"Failed to save circular document: {str(e)}")
 
 # ── Proposal ──────────────────────────────────────────────────────────────────
 
@@ -369,9 +368,13 @@ def generate_proposal(data: dict, ai_content: dict = None) -> str:
     p_closing.add_run(f"{closing_label}\n\n").font.size = Pt(12)
     p_closing.add_run(f"{data.get('from_name', '')}").bold = True
 
-    path = _unique_filename("proposal")
-    doc.save(path)
-    return path
+    try:
+        path = _unique_filename("proposal")
+        doc.save(path)
+        return path
+    except Exception as e:
+        print(f"[DocumentService] Error saving proposal: {e}")
+        raise RuntimeError(f"Failed to save proposal document: {str(e)}")
 
 
 # ── Event Report ──────────────────────────────────────────────────────────────
@@ -415,6 +418,9 @@ def generate_report(data: dict, ai_content: dict, images: List[str],
         ("Time", data.get("event_time", "")),
         ("Venue", data.get("location_name", "")),
     ]
+    
+    if data.get("sdg_number") and data.get("sdg_name"):
+        details.append(("SDG Goal", f"SDG {data['sdg_number']}: {data['sdg_name']}"))
     
     for label, val in details:
         p = doc.add_paragraph()
@@ -508,9 +514,13 @@ def generate_report(data: dict, ai_content: dict, images: List[str],
                 except Exception:
                     pass
 
-    path = _unique_filename("report")
-    doc.save(path)
-    return path
+    try:
+        path = _unique_filename("report")
+        doc.save(path)
+        return path
+    except Exception as e:
+        print(f"[DocumentService] Error saving report: {e}")
+        raise RuntimeError(f"Failed to save document: {str(e)}")
 
 
 # ── Page margin helper ────────────────────────────────────────────────────────

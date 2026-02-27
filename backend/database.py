@@ -12,15 +12,16 @@ import os
 # Load variables from the .env file sitting next to this module
 load_dotenv()
 
-DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./fallback.db")
 
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set. Check your .env file.")
+if not os.getenv("DATABASE_URL"):
+    print("[Database] WARNING: DATABASE_URL not found in .env. Using local SQLite.")
 
 # Neon requires SSL; inject sslmode if not already present in the URL
 connect_args: dict = {}
-if "neon.tech" in DATABASE_URL or "sslmode" not in DATABASE_URL:
-    connect_args["sslmode"] = "require"
+if not DATABASE_URL.startswith("sqlite"):
+    if "neon.tech" in DATABASE_URL or "sslmode" not in DATABASE_URL:
+        connect_args["sslmode"] = "require"
 
 engine = create_engine(
     DATABASE_URL,

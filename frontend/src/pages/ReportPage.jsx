@@ -25,7 +25,7 @@ export default function ReportPage() {
             formData.append('event_title', data.event_title);
             formData.append('summary', data.summary);
             formData.append('num_participants', data.num_participants);
-            formData.append('sdg_id', data.sdg_id);
+            if (data.sdg_id) formData.append('sdg_id', data.sdg_id);
             if (data.date) formData.append('date', data.date);
 
             // Attach image files
@@ -109,11 +109,11 @@ export default function ReportPage() {
 
                 {/* SDG Goal dropdown */}
                 <div>
-                    <label className="form-label">SDG Goal *</label>
+                    <label className="form-label">SDG Goal (Optional)</label>
                     <select
                         className="form-input"
                         style={{ appearance: 'auto' }}
-                        {...register('sdg_id', { required: 'Please select an SDG goal' })}
+                        {...register('sdg_id')}
                     >
                         <option value="">— Select UN SDG Goal —</option>
                         {sdgGoals.map(g => (
