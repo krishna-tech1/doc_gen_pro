@@ -30,9 +30,10 @@ def create_proposal(payload: ProposalRequest, db: Session = Depends(get_db)):
 
     # ── Persist to DB (optional) ──────────────────────────────────────────────
     event_id = None
+    final_title = payload.event_name or "Untitled Proposal"
     try:
         event = Event(
-            title      = payload.event_name,
+            title      = final_title,
             ai_content = json.dumps(ai_content),
         )
         db.add(event)

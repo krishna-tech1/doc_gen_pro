@@ -46,9 +46,10 @@ def create_circular(payload: CircularRequest, db: Session = Depends(get_db)):
 
     # ── Persist to DB (optional) ──────────────────────────────────────────────
     event_id = None
+    final_title = payload.event_name or "Untitled Circular"
     try:
         event = Event(
-            title      = payload.event_name,
+            title      = final_title,
             department = payload.department,
             date       = payload.date,
             venue      = "College Premises",

@@ -96,107 +96,98 @@ export default function ReportGenerator() {
               <CardContent className="space-y-6">
                 <FormField
                   label="Event Name"
-                  required
                   error={errors.event_title?.message}
                 >
                   <Input
                     placeholder="e.g., International Women's Day Seminar"
-                    {...register('event_title', { required: 'Event name is required' })}
+                    {...register('event_title')}
                   />
                 </FormField>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     label="Organized by (Department)"
-                    required
                     error={errors.department?.message}
                   >
                     <Input
                       placeholder="e.g., BCA Department"
-                      {...register('department', { required: 'Department is required' })}
+                      {...register('department')}
                     />
                   </FormField>
 
                   <FormField
                     label="Event Time"
-                    required
                     error={errors.event_time?.message}
                   >
                     <Input
                       placeholder="e.g., 10:00 AM"
-                      {...register('event_time', { required: 'Time is required' })}
+                      {...register('event_time')}
                     />
                   </FormField>
                 </div>
 
                 <FormField
                   label="Venue"
-                  required
                   error={errors.venue?.message}
                 >
                   <Input
                     placeholder="e.g., College Auditorium"
-                    {...register('venue', { required: 'Venue is required' })}
+                    {...register('venue')}
                   />
                 </FormField>
 
                 <FormField
                   label="Chief Guest"
-                  required
                   error={errors.chief_guest?.message}
                 >
                   <Input
                     placeholder="e.g., Dr. Jane Smith"
-                    {...register('chief_guest', { required: 'Chief guest name is required' })}
+                    {...register('chief_guest')}
                   />
                 </FormField>
 
                 <FormField
                   label="Brief Description / Summary"
-                  required
                   error={errors.summary?.message}
                 >
                   <Textarea
                     rows={4}
                     placeholder="Describe the key highlights of the event..."
-                    {...register('summary', { required: 'Summary is required' })}
+                    {...register('summary')}
                   />
                 </FormField>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     label="No. of Participants"
-                    required
                     error={errors.num_participants?.message}
                   >
                     <Input
                       type="number"
                       min="1"
                       placeholder="e.g., 120"
-                      {...register('num_participants', { required: 'Participant count is required', min: 1 })}
+                      {...register('num_participants')}
                     />
                   </FormField>
 
                   <FormField
                     label="Event Date"
-                    required
                     error={errors.date?.message}
                   >
                     <Input
                       type="date"
-                      {...register('date', { required: 'Date is required' })}
+                      {...register('date')}
                     />
                   </FormField>
                 </div>
 
                 <FormField
                   label="Event Coordinator"
-                  required
                   error={errors.coordinator_name?.message}
                 >
                   <Input
                     placeholder="e.g., Prof. A. Kumar"
-                    {...register('coordinator_name', { required: 'Coordinator name is required' })}
+                    {...register('coordinator_name')}
                   />
                 </FormField>
 

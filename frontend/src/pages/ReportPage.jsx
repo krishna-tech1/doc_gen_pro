@@ -60,42 +60,36 @@ export default function ReportPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="glass-card p-7 space-y-5">
                 {/* Event title */}
                 <div>
-                    <label className="form-label">Event Title *</label>
+                    <label className="form-label">Event Title</label>
                     <input
                         className="form-input"
                         placeholder="e.g. International Women's Day Seminar"
-                        {...register('event_title', { required: 'Event title is required' })}
+                        {...register('event_title')}
                     />
-                    {errors.event_title && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.event_title.message}</p>}
                 </div>
 
                 {/* Summary */}
                 <div>
-                    <label className="form-label">Event Summary *</label>
+                    <label className="form-label">Event Summary</label>
                     <textarea
                         rows={4}
                         className="form-input resize-none"
                         placeholder="Briefly describe what happened during the event…"
-                        {...register('summary', { required: 'Summary is required' })}
+                        {...register('summary')}
                     />
-                    {errors.summary && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.summary.message}</p>}
                 </div>
 
                 {/* Participants & Date */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="form-label">No. of Participants *</label>
+                        <label className="form-label">No. of Participants</label>
                         <input
                             type="number"
                             min="1"
                             className="form-input"
                             placeholder="e.g. 120"
-                            {...register('num_participants', {
-                                required: 'Participant count is required',
-                                min: { value: 1, message: 'Must be at least 1' },
-                            })}
+                            {...register('num_participants')}
                         />
-                        {errors.num_participants && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.num_participants.message}</p>}
                     </div>
                     <div>
                         <label className="form-label">Event Date</label>

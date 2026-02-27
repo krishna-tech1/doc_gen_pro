@@ -34,7 +34,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id         = Column(Integer, primary_key=True, index=True)
-    title      = Column(String(255), nullable=False)
+    title      = Column(String(255), nullable=True)
     department = Column(String(120), nullable=True)
     date       = Column(String(50), nullable=True)   # store as ISO string
     venue      = Column(String(255), nullable=True)

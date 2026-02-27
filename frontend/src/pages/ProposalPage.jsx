@@ -38,53 +38,46 @@ export default function ProposalPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="glass-card p-7 space-y-5">
                 {/* Event name */}
                 <div>
-                    <label className="form-label">Event Name *</label>
+                    <label className="form-label">Event Name</label>
                     <input
                         className="form-input"
                         placeholder="e.g. National Science Symposium 2025"
-                        {...register('event_name', { required: 'Event name is required' })}
+                        {...register('event_name')}
                     />
-                    {errors.event_name && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.event_name.message}</p>}
                 </div>
 
                 {/* Objectives */}
                 <div>
-                    <label className="form-label">Brief Objectives *</label>
+                    <label className="form-label">Brief Objectives</label>
                     <textarea
                         rows={3}
                         className="form-input resize-none"
                         placeholder="e.g. Promote research culture among students and faculty"
-                        {...register('objectives', { required: 'Objectives are required' })}
+                        {...register('objectives')}
                     />
-                    {errors.objectives && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.objectives.message}</p>}
                 </div>
 
                 {/* Target audience */}
                 <div>
-                    <label className="form-label">Target Audience *</label>
+                    <label className="form-label">Target Audience</label>
                     <input
                         className="form-input"
                         placeholder="e.g. UG and PG students, Faculty members"
-                        {...register('target_audience', { required: 'Target audience is required' })}
+                        {...register('target_audience')}
                     />
-                    {errors.target_audience && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.target_audience.message}</p>}
                 </div>
 
                 {/* Budget */}
                 <div>
-                    <label className="form-label">Proposed Budget (₹) *</label>
+                    <label className="form-label">Proposed Budget (₹)</label>
                     <input
                         type="number"
                         min="0"
                         step="0.01"
                         className="form-input"
                         placeholder="e.g. 50000"
-                        {...register('budget', {
-                            required: 'Budget is required',
-                            min: { value: 0, message: 'Budget must be positive' },
-                        })}
+                        {...register('budget')}
                     />
-                    {errors.budget && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.budget.message}</p>}
                 </div>
 
                 {apiError && (

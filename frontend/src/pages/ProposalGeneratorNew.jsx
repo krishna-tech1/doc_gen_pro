@@ -48,47 +48,47 @@ export default function ProposalGenerator() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField label="Proposal Date" required error={errors.proposal_date?.message}>
-                    <Input type="date" {...register('proposal_date', { required: 'Required' })} />
+                  <FormField label="Proposal Date" error={errors.proposal_date?.message}>
+                    <Input type="date" {...register('proposal_date')} />
                   </FormField>
-                  <FormField label="Department" required error={errors.department?.message}>
-                    <Input placeholder="BCM / BCA / CS" {...register('department', { required: 'Required' })} />
+                  <FormField label="Department" error={errors.department?.message}>
+                    <Input placeholder="BCM / BCA / CS" {...register('department')} />
                   </FormField>
                 </div>
 
                 <div className="p-4 bg-slate-50 rounded-lg space-y-4 border border-slate-100">
                   <h4 className="text-sm font-medium text-slate-900 border-b border-slate-200 pb-2 italic">From Information</h4>
-                  <FormField label="Name" required error={errors.from_name?.message}>
-                    <Input placeholder="Your Full Name" {...register('from_name', { required: 'Required' })} />
+                  <FormField label="Name" error={errors.from_name?.message}>
+                    <Input placeholder="Your Full Name" {...register('from_name')} />
                   </FormField>
-                  <FormField label="Designation" required error={errors.from_designation?.message}>
-                    <Input placeholder="Assistant Professor" {...register('from_designation', { required: 'Required' })} />
+                  <FormField label="Designation" error={errors.from_designation?.message}>
+                    <Input placeholder="Assistant Professor" {...register('from_designation')} />
                   </FormField>
                 </div>
 
                 <div className="p-4 bg-indigo-50/30 rounded-lg space-y-4 border border-indigo-100">
                   <h4 className="text-sm font-medium text-indigo-900 border-b border-indigo-200 pb-2 italic">Event Highlights</h4>
-                  <FormField label="Event Name" required error={errors.event_name?.message}>
-                    <Input placeholder="Workshop / Symposium Name" {...register('event_name', { required: 'Required' })} />
+                  <FormField label="Event Name" error={errors.event_name?.message}>
+                    <Input placeholder="Workshop / Symposium Name" {...register('event_name')} />
                   </FormField>
-                  <FormField label="Event Topic" required error={errors.event_topic?.message}>
-                    <Input placeholder="Machine Learning / UI Design" {...register('event_topic', { required: 'Required' })} />
+                  <FormField label="Event Topic" error={errors.event_topic?.message}>
+                    <Input placeholder="Machine Learning / UI Design" {...register('event_topic')} />
                   </FormField>
-                  <FormField label="Resource Person / Chief Guest" required error={errors.resource_person?.message}>
-                    <Input placeholder="Name, Organization/Title" {...register('resource_person', { required: 'Required' })} />
+                  <FormField label="Resource Person / Chief Guest" error={errors.resource_person?.message}>
+                    <Input placeholder="Name, Organization/Title" {...register('resource_person')} />
                   </FormField>
-                  <FormField label="Venue" required error={errors.venue?.message}>
-                    <Input placeholder="e.g. Lab 4 / Auditorium" {...register('venue', { required: 'Required' })} />
+                  <FormField label="Venue" error={errors.venue?.message}>
+                    <Input placeholder="e.g. Lab 4 / Auditorium" {...register('venue')} />
                   </FormField>
-                  <FormField label="Target Audience" required error={errors.target_audience?.message}>
-                    <Input placeholder="I & II Year Students" {...register('target_audience', { required: 'Required' })} />
+                  <FormField label="Target Audience" error={errors.target_audience?.message}>
+                    <Input placeholder="I & II Year Students" {...register('target_audience')} />
                   </FormField>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Event Date" required error={errors.event_date?.message}>
-                      <Input type="date" {...register('event_date', { required: 'Required' })} />
+                    <FormField label="Event Date" error={errors.event_date?.message}>
+                      <Input type="date" {...register('event_date')} />
                     </FormField>
-                    <FormField label="Event Time" required error={errors.event_time?.message}>
-                      <Input type="time" {...register('event_time', { required: 'Required' })} />
+                    <FormField label="Event Time" error={errors.event_time?.message}>
+                      <Input type="time" {...register('event_time')} />
                     </FormField>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export default function ProposalGenerator() {
                   <Textarea
                     rows={4}
                     placeholder="Focus area and learning outcomes..."
-                    {...register('short_description', { required: 'Required' })}
+                    {...register('short_description')}
                   />
                 </FormField>
 

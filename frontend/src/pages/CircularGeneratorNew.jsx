@@ -51,23 +51,21 @@ export default function CircularGenerator() {
               <CardContent className="space-y-6">
                 <FormField
                   label="Event Name"
-                  required
                   error={errors.event_name?.message}
                 >
                   <Input
                     placeholder="e.g., Annual Sports Day 2025"
-                    {...register('event_name', { required: 'Event name is required' })}
+                    {...register('event_name')}
                   />
                 </FormField>
 
                 <FormField
                   label="Date"
-                  required
                   error={errors.date?.message}
                 >
                   <Input
                     type="date"
-                    {...register('date', { required: 'Date is required' })}
+                    {...register('date')}
                   />
                 </FormField>
 
@@ -84,24 +82,22 @@ export default function CircularGenerator() {
 
                   <FormField
                     label="Department"
-                    required
                     error={errors.department?.message}
                   >
                     <Input
                       placeholder="e.g., Computer Applications"
-                      {...register('department', { required: 'Department is required' })}
+                      {...register('department')}
                     />
                   </FormField>
                 </div>
 
                 <FormField
                   label="Chief Guest"
-                  required
                   error={errors.chief_guest?.message}
                 >
                   <Input
                     placeholder="e.g., Dr. A. Ramesh, Principal"
-                    {...register('chief_guest', { required: 'Chief Guest is required' })}
+                    {...register('chief_guest')}
                   />
                 </FormField>
 

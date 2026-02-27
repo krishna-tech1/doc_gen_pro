@@ -28,9 +28,9 @@ UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "..", "uploads")
 
 @router.post("")
 async def create_report(
-    event_title:      str            = Form(...),
-    summary:          str            = Form(...),
-    num_participants: int            = Form(...),
+    event_title:      Optional[str]  = Form(None),
+    summary:          Optional[str]  = Form(None),
+    num_participants: Optional[int]  = Form(None),
     sdg_id:           Optional[int]  = Form(None),
     date:             Optional[str]  = Form(None),
     event_time:       Optional[str]  = Form(None),
@@ -121,11 +121,13 @@ async def create_report(
             if section in manual_overrides:
                 ai_content[section] = manual_overrides[section]
         
+    final_event_title = manual_overrides.get("event_title", event_title) or "Untitled Event Report"
+    
     # ── Persist Event ─────────────────────────────────────────────────────────
     event_id = None
     try:
         event = Event(
-            title      = manual_overrides.get("event_title", event_title),
+            title      = final_event_title,
             date       = manual_overrides.get("date", date),
             venue      = manual_overrides.get("location_name", final_venue),
             sdg_id     = sdg_id,
@@ -153,13 +155,13 @@ async def create_report(
     # ── Generate DOCX ─────────────────────────────────────────────────────────
     report_data = {
         "report_header":    manual_overrides.get("report_header", "EVENT REPORT"),
-        "event_title":      manual_overrides.get("event_title", event_title),
-        "department":       manual_overrides.get("department", department),
-        "event_time":       manual_overrides.get("event_time", event_time),
-        "chief_guest":      manual_overrides.get("chief_guest", chief_guest),
-        "coordinator_name": manual_overrides.get("coordinator_name", coordinator_name),
-        "summary":          manual_overrides.get("summary", summary),
-        "num_participants": manual_overrides.get("num_participants", num_participants),
+        "event_title":      final_event_title,
+        "department":       manual_overrides.get("department", department or ""),
+        "event_time":       manual_overrides.get("event_time", event_time or ""),
+        "chief_guest":      manual_overrides.get("chief_guest", chief_guest or ""),
+        "coordinator_name": manual_overrides.get("coordinator_name", coordinator_name or ""),
+        "summary":          manual_overrides.get("summary", summary or ""),
+        "num_participants": manual_overrides.get("num_participants", num_participants or 0),
         "date":             manual_overrides.get("date", date or ""),
         "location_name":    manual_overrides.get("location_name", final_venue),
         "sdg_number":       sdg_number,

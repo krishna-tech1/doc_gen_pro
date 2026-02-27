@@ -39,57 +39,52 @@ export default function CircularPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="glass-card p-7 space-y-5">
                 {/* Title */}
                 <div>
-                    <label className="form-label">Event / Circular Title *</label>
+                    <label className="form-label">Event / Circular Title</label>
                     <input
                         className="form-input"
                         placeholder="e.g. Annual Sports Day 2025"
-                        {...register('title', { required: 'Title is required' })}
+                        {...register('title')}
                     />
-                    {errors.title && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.title.message}</p>}
                 </div>
 
                 {/* Date & Time row */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="form-label">Date *</label>
+                        <label className="form-label">Date</label>
                         <input
                             type="date"
                             className="form-input"
-                            {...register('date', { required: 'Date is required' })}
+                            {...register('date')}
                         />
-                        {errors.date && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.date.message}</p>}
                     </div>
                     <div>
-                        <label className="form-label">Time *</label>
+                        <label className="form-label">Time</label>
                         <input
                             type="time"
                             className="form-input"
-                            {...register('time', { required: 'Time is required' })}
+                            {...register('time')}
                         />
-                        {errors.time && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.time.message}</p>}
                     </div>
                 </div>
 
                 {/* Venue */}
                 <div>
-                    <label className="form-label">Venue *</label>
+                    <label className="form-label">Venue</label>
                     <input
                         className="form-input"
                         placeholder="e.g. College Auditorium"
-                        {...register('venue', { required: 'Venue is required' })}
+                        {...register('venue')}
                     />
-                    {errors.venue && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.venue.message}</p>}
                 </div>
 
                 {/* Department */}
                 <div>
-                    <label className="form-label">Department *</label>
+                    <label className="form-label">Department</label>
                     <input
                         className="form-input"
                         placeholder="e.g. Computer Science and Engineering"
-                        {...register('department', { required: 'Department is required' })}
+                        {...register('department')}
                     />
-                    {errors.department && <p className="text-xs mt-1" style={{ color: '#dc2626' }}>{errors.department.message}</p>}
                 </div>
 
                 {/* Chief Guest */}
